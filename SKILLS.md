@@ -1,8 +1,8 @@
 # Skills Inventory
 
-This document lists all 79 skills built for the Hermes Agent system, organized by category.
+This document lists all 84 skills built for the Hermes Agent system, organized by category.
 
-## autonomous-ai-agents (5 skills)
+## autonomous-ai-agents (6 skills)
 
 | Skill | Description |
 |-------|-------------|
@@ -11,8 +11,15 @@ This document lists all 79 skills built for the Hermes Agent system, organized b
 | hermes-agent | Configure, extend, or contribute to Hermes Agent |
 | opencode | Delegate coding to OpenCode CLI |
 | staged-idea-to-claude-workflow | Two-stage workflow: ideation/planning first, then execution |
+| tailscale-mac-remote-access | Tailscale remote access to Mac Mini |
 
-## creative (15 skills)
+## apple (5 skills)
+
+| Skill | Description |
+|-------|-------------|
+| apple-reminders | Manage Apple Reminders via remindctl CLI |
+
+## creative (17 skills)
 
 | Skill | Description |
 |-------|-------------|
@@ -31,6 +38,8 @@ This document lists all 79 skills built for the Hermes Agent system, organized b
 | popular-web-designs | 54 design systems as HTML/CSS |
 | pretext | DOM-free text layout demos |
 | sketch | Throwaway HTML mockups |
+| songwriting-and-ai-music | Songwriting craft and Suno AI prompts |
+| touchdesigner-mcp | TouchDesigner control via twozero MCP |
 
 ## data-science (1 skill)
 
@@ -38,19 +47,32 @@ This document lists all 79 skills built for the Hermes Agent system, organized b
 |-------|-------------|
 | jupyter-live-kernel | Iterative Python via live Jupyter kernel |
 
+## devops (2 skills)
+
+| Skill | Description |
+|-------|-------------|
+| TBD | DevOps automation skills |
+
+## dogfood (2 skills)
+
+| Skill | Description |
+|-------|-------------|
+| dogfood | Exploratory QA of web apps: find bugs, evidence, reports |
+
 ## email (1 skill)
 
 | Skill | Description |
 |-------|-------------|
 | himalaya | IMAP/SMTP email from terminal |
 
-## financial-analysis (1 skill)
+## financial-analysis (2 skills)
 
 | Skill | Description |
 |-------|-------------|
-| stockman | Stock analysis, screening, research |
+| india-rsu-tax-filing | India RSU tax filing workflow |
+| stockman | Stock analysis, screening, portfolio tracking |
 
-## github (5 skills)
+## github (6 skills)
 
 | Skill | Description |
 |-------|-------------|
@@ -59,6 +81,7 @@ This document lists all 79 skills built for the Hermes Agent system, organized b
 | github-code-review | Review PRs with diffs and comments |
 | github-issues | Create, triage, label issues |
 | github-pr-workflow | PR lifecycle: branch, commit, open, merge |
+| github-repo-management | Clone/create/fork repos, manage remotes |
 
 ## media (4 skills)
 
@@ -66,20 +89,17 @@ This document lists all 79 skills built for the Hermes Agent system, organized b
 |-------|-------------|
 | gif-search | Search/download GIFs from Tenor |
 | heartmula | Suno-like song generation |
-| songsee | Audio spectrograms/features |
-| youtube-content | YouTube transcripts to summaries |
+| songsee | Audio spectrograms/features (mel, chroma, MFCC) |
+| youtube-content | YouTube transcripts to summaries and blogs |
 
-## mlops (7 skills)
+## mlops (4 skills)
 
 | Skill | Description |
 |-------|-------------|
-| audiocraft-audio-generation | MusicGen text-to-music |
-| evaluating-llms-harness | Benchmark LLMs (MMLU, GSM8K) |
+| evaluation | Model evaluation benchmarks (lm-eval-harness) |
 | huggingface-hub | HuggingFace model/dataset management |
-| llama-cpp | Local GGUF inference |
-| obliteratus | Abliterate LLM refusals |
-| segment-anything-model | SAM zero-shot segmentation |
-| serving-llms-vllm | vLLM high-throughput serving |
+| inference | Model serving, quantization, optimization |
+| models | Specific model architectures (SAM, AudioCraft) |
 
 ## note-taking (1 skill)
 
@@ -87,87 +107,98 @@ This document lists all 79 skills built for the Hermes Agent system, organized b
 |-------|-------------|
 | obsidian | Read/edit Obsidian vault |
 
-## productivity (14 skills)
+## productivity (12 skills)
 
 | Skill | Description |
 |-------|-------------|
-| airtable | Airtable REST API |
-| google-workspace | Gmail, Calendar, Drive, Docs |
-| maps | Geocode, POIs, routes via OSM |
+| airtable | Airtable REST API via curl |
+| google-workspace | Gmail, Calendar, Drive, Docs via gws CLI |
+| maps | Geocode, POIs, routes via OpenStreetMap |
 | markitdown | Convert PDF/Word/Excel to Markdown |
 | multi-agent-workflow-routing | Route tasks across personas |
-| nano-pdf | Edit PDF text |
-| notion | Notion API integration |
-| ocr-and-documents | Extract text from PDFs |
+| nano-pdf | Edit PDF text via NLP prompts |
+| notion | Notion API + ntn CLI integration |
+| ocr-and-documents | Extract text from PDFs and scans |
 | personalized-assistance-profile | Persistent user preferences |
+| petdex | Animated petdex mascots for Hermes |
 | powerpoint | Create/edit PowerPoint decks |
-| teams-meeting-pipeline | Teams meeting summaries |
+| teams-meeting-pipeline | Teams meeting summary pipeline |
 
 ## red-teaming (1 skill)
 
 | Skill | Description |
 |-------|-------------|
-| godmode | Jailbreak LLMs techniques |
+| godmode | Jailbreak LLM techniques |
+
+## reference (1 skill)
+
+| Skill | Description |
+|-------|-------------|
+| hermes-bible | Navigate the Hermes Bible community resource |
 
 ## research (8 skills)
 
 | Skill | Description |
 |-------|-------------|
-| arxiv | Search arXiv papers |
-| blogwatcher | Monitor blogs/RSS feeds |
-| compare-flights | Find/compare flight fares |
-| flight-status-verification | Verify flight details |
-| llm-wiki | Karpathy's LLM Wiki |
-| polymarket | Query prediction markets |
-| research-paper-writing | ML paper writing |
+| arxiv | Search arXiv papers by keyword/author/category |
+| blogwatcher | Monitor blogs and RSS/Atom feeds |
+| compare-flights | Find and compare flight fares |
+| flight-status-verification | Verify flight details from time window + route |
+| llm-wiki | Karpathy's LLM Wiki: build/query markdown KB |
+| polymarket | Query Polymarket prediction markets |
+| research-paper-writing | ML paper writing workflow |
 | stock-price | Stock price lookups (NSE/US) |
 
 ## smart-home (1 skill)
 
 | Skill | Description |
 |-------|-------------|
-| openhue | Control Philips Hue lights |
+| openhue | Control Philips Hue lights and scenes |
 
 ## social-media (1 skill)
 
 | Skill | Description |
 |-------|-------------|
-| xurl | X/Twitter via CLI |
+| xurl | X/Twitter via xurl CLI |
 
-## software-development (8 skills)
+## software-development (9 skills)
 
 | Skill | Description |
 |-------|-------------|
-| hermes-agent-skill-authoring | Author SKILL.md files |
-| node-inspect-debugger | Debug Node.js |
-| plan | Plan mode for markdown plans |
-| python-debugpy | Debug Python with pdb |
-| requesting-code-review | Pre-commit security/quality |
+| hermes-agent-skill-authoring | Author SKILL.md files with validator |
+| node-inspect-debugger | Debug Node.js via Chrome DevTools Protocol |
+| plan | Plan mode: actionable markdown plans |
+| python-debugpy | Debug Python with pdb and debugpy |
+| requesting-code-review | Pre-commit security/quality gates |
 | simplify-code | Parallel 3-agent code cleanup |
-| spike | Throwaway experiments |
+| spike | Throwaway experiments to validate ideas |
 | systematic-debugging | 4-phase root cause debugging |
-| test-driven-development | TDD workflows |
+| test-driven-development | TDD: RED-GREEN-REFACTOR workflow |
 
 ## Summary
 
 | Category | Count |
 |----------|-------|
-| autonomous-ai-agents | 5 |
-| creative | 15 |
+| apple | 5 |
+| autonomous-ai-agents | 6 |
+| creative | 17 |
 | data-science | 1 |
+| devops | 2 |
+| dogfood | 2 |
 | email | 1 |
-| financial-analysis | 1 |
-| github | 5 |
+| financial-analysis | 2 |
+| github | 6 |
 | media | 4 |
-| mlops | 7 |
+| mlops | 4 |
 | note-taking | 1 |
-| productivity | 14 |
+| productivity | 12 |
 | red-teaming | 1 |
+| reference | 1 |
 | research | 8 |
 | smart-home | 1 |
 | social-media | 1 |
-| software-development | 8 |
-| **Total** | **79** |
+| software-development | 9 |
+| **Total** | **84** |
 
 ---
 
