@@ -27,7 +27,7 @@ A dedicated financial analyst persona — runs every trading day:
 - **9:00am IST** — Portfolio prediction for the day
 - **3:00pm IST** — Compare prediction vs actual, log accuracy
 - **Monthly** — Piotroski F-Score screener across NSE/US markets
-- Covers 24 holdings: GOLDBEES, SILVERBEES, SGBs, ICICIBANK, KOTAKBANK, MANAPPURAM, M&MFIN, SHRIRAMFIN, TATASTEEL, NATIONALUM, NMDC, POWERGRID, TATAPOWER, MTARTECH, COROMANDEL, HEROMOTOCO, LUPIN, ZYDUSLIFE, TATACONSUM, VOLTAS, DELHIVERY, TCS, RATEGAIN
+- Tracks a diversified portfolio across gold, silver, sovereign bonds, banking, NBFC, metals, power, defense, fertilizers, autos, pharma, FMCG, logistics, and IT (full holdings stored privately — not committed to this repo)
 
 ### 📰 AI Ecosystem Monitoring
 Daily 7am IST brief covering:
@@ -60,7 +60,7 @@ Philips Hue lighting, Apple Reminders, Ultrahuman Ring health data, Yuanbao grou
 | mlops | 4 | llama.cpp, vLLM, HuggingFace, evaluation |
 | apple | 5 | Reminders, desktop control |
 | financial-analysis | 2 | StockMan analyst, India RSU tax |
-| media | 4 | GIF search, song generation, YouTube |
+| media | 5 | GIF search, MiniMax TTS, song generation, YouTube |
 | dogfood | 2 | Exploratory QA of web apps |
 | devops | 2 | DevOps automation |
 
@@ -109,8 +109,8 @@ See [docs/architecture.md](docs/architecture.md) for the full technical architec
 
 | Platform | What's Connected |
 |----------|-----------------|
-| **Discord** | Primary home channel,Ideas channel for AI briefs, StockMan output |
-| **Telegram** | Home delivery channel (disabled for Sachin — banned in India) |
+| **Discord** | Primary home channel, Ideas channel for AI briefs, StockMan output |
+| **Telegram** | Home delivery channel (currently disabled in this region) |
 | **Photon** | iMessage integration for mobile |
 | **GitHub** | PR workflow, code review, repo management |
 | **Kite (Zerodha)** | Real-time prices, order management, portfolio |
