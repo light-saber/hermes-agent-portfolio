@@ -1,0 +1,83 @@
+# Custom TTS provider template for MiniMax Speech 2.8
+#
+# Hermes's built-in `text_to_speech` tool supports a fixed list of providers
+# (edge, openai, gemini, xai, mistral, elevenlabs, neutts, piper). MiniMax is
+# not yet in that list. This template shows two ways to route MiniMax TTS
+# through your config:
+#
+# Option A: Use the bundled script (`skills/media/minimax-tts/scripts/minimax_tts.py`)
+# Option B: Configure Hermes's `tts.provider` to a script-backed provider (if supported
+#           by your Hermes version)
+
+# ---------------------------------------------------------------------------
+# Option A: Add to your cron prompts or skills so calls go through the script
+# ---------------------------------------------------------------------------
+
+# Example skill prompt snippet:
+#
+#   For audio narration, run:
+#     python ~/.hermes/scripts/minimax_tts.py "<text>" \
+#       --voice English_PassionateWarrior \
+#       --out /tmp/narration.mp3
+#
+# Then convert for Discord:
+#     ffmpeg -i /tmp/narration.mp3 -c:a libopus -b:a 64k \
+#       -application voip -ar 48000 -ac 1 voice-message.ogg
+
+# ---------------------------------------------------------------------------
+# Option B: Add a `minimax` block to your `tts:` config (Hermes 0.18+)
+# ---------------------------------------------------------------------------
+
+# tts:
+#   provider: minimax   # add this provider to Hermes
+#   minimax:
+#     api_key: ${MINIMAX_API_KEY}
+#     model: speech-2.8-hd
+#     voice: English_PassionateWarrior
+#     base_url: https://api.minimax.io/v1/t2a_v2
+
+# ---------------------------------------------------------------------------
+# Environment variables
+# ---------------------------------------------------------------------------
+
+# Either:
+#   export MINIMAX_API_KEY="sk-cp-..."
+# Or:
+#   echo "sk-cp-..." > ~/.hermes/auth/minimax_tts.token
+#   chmod 600 ~/.hermes/auth/minimax_tts.token
+
+# ---------------------------------------------------------------------------
+# API request shape (for reference)
+# ---------------------------------------------------------------------------
+
+# POST https://api.minimax.io/v1/t2a_v2
+# Authorization: Bearer $MINIMAX_API_KEY
+# Content-Type: application/json
+# {
+#   "model": "speech-2.8-hd",
+#   "text": "Hello world",
+#   "stream": false,
+#   "voice_setting": {
+#     "voice_id": "English_PassionateWarrior",
+#     "speed": 1.0,
+#     "vol": 1.0,
+#     "pitch": 0
+#   },
+#   "audio_setting": {
+#     "sample_rate": 32000,
+#     "bitrate": 128000,
+#     "format": "mp3",
+#     "channel": 1
+#   },
+#   "language_boost": "auto"
+# }
+#
+# Response: JSON with `data.audio` as a hex-encoded MP3/WAV blob.
+
+# ---------------------------------------------------------------------------
+# Cost note
+# ---------------------------------------------------------------------------
+
+# MiniMax Speech 2.8 HD is part of the MiniMax Token Plan Subscription.
+# Check your plan's per-character quota at:
+# https://platform.minimax.io/user-center/billing

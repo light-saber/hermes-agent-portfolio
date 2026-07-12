@@ -1,6 +1,6 @@
 # Skills Inventory
 
-This document lists all 84 skills built for the Hermes Agent system, organized by category.
+This document lists all 85 skills built for the Hermes Agent system, organized by category.
 
 ## autonomous-ai-agents (6 skills)
 
@@ -83,12 +83,13 @@ This document lists all 84 skills built for the Hermes Agent system, organized b
 | github-pr-workflow | PR lifecycle: branch, commit, open, merge |
 | github-repo-management | Clone/create/fork repos, manage remotes |
 
-## media (4 skills)
+## media (5 skills)
 
 | Skill | Description |
 |-------|-------------|
 | gif-search | Search/download GIFs from Tenor |
 | heartmula | Suno-like song generation |
+| minimax-tts | TTS via MiniMax Speech 2.8 HD (Token Plan) |
 | songsee | Audio spectrograms/features (mel, chroma, MFCC) |
 | youtube-content | YouTube transcripts to summaries and blogs |
 

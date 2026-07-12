@@ -5,7 +5,7 @@ Public-facing portfolio showcasing the Hermes Agent system. Not a working codeba
 
 ## What This Repo Is
 - README.md — high-level overview for visitors
-- SKILLS.md — full inventory of 84 skills across 20 categories
+- SKILLS.md — full inventory of 85 skills across 20 categories
 - docs/architecture.md — technical architecture
 - skills/ — skill examples and templates
 

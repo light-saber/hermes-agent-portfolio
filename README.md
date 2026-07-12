@@ -1,6 +1,6 @@
 # Hermes Agent Portfolio
 
-A personal AI assistant agent system built with Hermes Agent, showcasing 84 specialized skills across 20 categories, 7 active automated workflows, and deep multi-platform integration.
+A personal AI assistant agent system built with Hermes Agent, showcasing 85 specialized skills across 20 categories, 7 active automated workflows, and deep multi-platform integration.
 
 ## What This Is
 
