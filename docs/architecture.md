@@ -11,7 +11,7 @@ High-level system architecture for the Hermes Agent personal assistant system. L
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
 │  │  Skills  │  │  Memory  │  │  Cron    │  │   MCP    │    │
 │  │ System   │  │  Layer   │  │Scheduler │  │  Tools   │    │
-│  │  89 / 33 │  │ 2-tier   │  │  14 jobs │  │          │    │
+│  │  90 / 33 │  │ 2-tier   │  │  14 jobs │  │          │    │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘    │
 │       │             │             │             │           │
 │  ┌────┴─────────────┴─────────────┴─────────────┴────┐     │
@@ -42,9 +42,9 @@ High-level system architecture for the Hermes Agent personal assistant system. L
 - **Responsibilities**: LLM interaction, tool call sequencing, error handling, multi-turn reasoning, sub-agent dispatch
 - **Providers**: Anthropic Claude, OpenAI (via Codex), MiniMax-M3 — routed by task type
 
-### 2. Sub-agent Roster (6 specialists)
+### 2. Sub-agent Roster (7 specialists)
 
-Momo delegates non-trivial work to one of six specialist sub-agents via `delegate_task`. Each sub-agent operates in an isolated context window, returns a clean summary back to Momo, and Momo presents it to the user.
+Momo delegates non-trivial work to one of seven specialist sub-agents via `delegate_task`. Each sub-agent operates in an isolated context window, returns a clean summary back to Momo, and Momo presents it to the user.
 
 | # | Agent | Domain |
 |---|-------|--------|
@@ -54,10 +54,11 @@ Momo delegates non-trivial work to one of six specialist sub-agents via `delegat
 | 4 | **HealthGuard** | Health insurance policy, claims, wearable trends, family vaccinations |
 | 5 | **CodeForge** | Side-project scoping → Claude Code handoff brief |
 | 6 | **Researcher** | Deep-dive research (vaccines, tech, policy) |
+| 7 | **MemeLord** | Discord meme work — image generation, GIF search, captions, daily digest |
 
 The dispatch playbook lives in the `sub-agent-dispatch` skill. Default behavior: any multi-step or research-heavy ask → dispatch to the matching agent. Inline: simple Q&A, single tool calls, cron-managed workflows.
 
-### 3. Skills System (89 skills, 33 categories)
+### 3. Skills System (90 skills, 33 categories)
 - **Purpose**: Modular capability packages — each skill is a self-contained workflow
 - **Structure**:
   - `SKILL.md` — definition, prerequisites, commands, pitfalls
@@ -238,7 +239,7 @@ Daily brief at 7am IST using three research skills:
 | Platforms | Discord, Photon (iMessage), Telegram (routed to Discord) |
 | Trading | Zerodha Kite MCP |
 | Hosting | Linux VPS (Hostinger) |
-| Skill Count | 89 across 33 categories |
+| Skill Count | 90 across 33 categories |
 
 ## Scalability Profile
 
@@ -246,8 +247,8 @@ Daily brief at 7am IST using three research skills:
 - Runs autonomously on VPS — no laptop required
 - 14 cron jobs running on schedule
 - All platforms connected simultaneously
-- ~89 skills available on demand
-- 6 sub-agents available on demand
+- ~90 skills available on demand
+- 7 sub-agents available on demand
 - OpenViking KB holds long-term memory
 
 ### What This Demonstrates

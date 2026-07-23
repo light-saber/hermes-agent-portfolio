@@ -1,18 +1,18 @@
 # Hermes Agent Portfolio
 
-A personal AI assistant agent system built with Hermes Agent, showcasing 89 specialized skills across 33 categories, 14 active automated workflows, a 6-specialist sub-agent roster, and deep multi-platform integration.
+A personal AI assistant agent system built with Hermes Agent, showcasing 90 specialized skills across 33 categories, 14 active automated workflows, a 7-specialist sub-agent roster, and deep multi-platform integration.
 
 ## What This Is
 
-A production-grade personal AI agent system — not a demo, not a toy. It's built to run reliably every day: doing financial analysis, monitoring the AI ecosystem, managing email, watching deadlines, handling research tasks, and more. Momo is the chief-of-staff orchestrator; six specialist sub-agents do the deep work.
+A production-grade personal AI agent system — not a demo, not a toy. It's built to run reliably every day: doing financial analysis, monitoring the AI ecosystem, managing email, watching deadlines, handling research tasks, and more. Momo is the chief-of-staff orchestrator; seven specialist sub-agents do the deep work.
 
 ## At a Glance
 
 | Dimension | Detail |
 |-----------|--------|
-| **Skills** | 89 across 33 categories |
+| **Skills** | 90 across 33 categories |
 | **Active Cron Jobs** | 14 (daily/weekly/monthly/one-shot) |
-| **Sub-agents** | 6 specialists dispatched via `delegate_task` |
+| **Sub-agents** | 7 specialists dispatched via `delegate_task` |
 | **Profiles** | `default`, `tax-assist`, `hsbc-credit-card-manager` |
 | **Platforms** | Discord, Telegram, Photon (iMessage) |
 | **LLM Providers** | Anthropic, OpenAI Codex, MiniMax (MiniMax-M3) |
@@ -22,7 +22,7 @@ A production-grade personal AI agent system — not a demo, not a toy. It's buil
 ## Core Capabilities
 
 ### 🤖 Sub-agent Roster (chief-of-staff model)
-Momo is the orchestrator. For non-trivial work, Momo dispatches to one of six specialist sub-agents via `delegate_task`. Each agent works in an isolated context and returns a clean summary.
+Momo is the orchestrator. For non-trivial work, Momo dispatches to one of seven specialist sub-agents via `delegate_task`. Each agent works in an isolated context and returns a clean summary.
 
 | # | Agent | Domain | Skills loaded |
 |---|-------|--------|---------------|
@@ -32,6 +32,7 @@ Momo is the orchestrator. For non-trivial work, Momo dispatches to one of six sp
 | 4 | **HealthGuard** | Health insurance policy queries, claim filing, wearable health trend interpretation, family vaccination schedules | `ultrahuman-insights` |
 | 5 | **CodeForge** | Side-project scoping — takes a 1-line idea, returns a Claude Code handoff brief (scope/README/milestones) | `github-pr-workflow` |
 | 6 | **Researcher** | Deep dives (vaccines, tech comparisons, policy research) | `linkup-research`, `arxiv`, `blogwatcher` |
+| 7 | **MemeLord** | Discord meme work — image generation, GIF search, captions, daily digest | `gif-search` |
 
 Default behavior: any multi-step or research-heavy ask → dispatch to the matching agent. Momo handles simple Q&A, single tool calls, and cron-managed workflows inline. The dispatch playbook lives in the `sub-agent-dispatch` skill.
 
@@ -97,7 +98,7 @@ Philips Hue lighting, Apple Reminders, Ultrahuman Ring health data, Yuanbao grou
 | social-media | 3 | X/Twitter via xurl, Discord posting, xurl MCP |
 | software-development | 8 | TDD, debugging, code review, spike, plan, VPS webpage |
 | stock-prediction-model | 1 | Sachin's portfolio prediction model |
-| sub-agent-dispatch | 1 | 6-specialist dispatch playbook |
+| sub-agent-dispatch | 1 | 7-specialist dispatch playbook |
 | ultrahuman-insights | 1 | Ultrahuman ring data analysis |
 | yuanbao | 1 | Yuanbao groups |
 

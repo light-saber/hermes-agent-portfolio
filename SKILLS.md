@@ -1,6 +1,6 @@
 # Skills Inventory
 
-This document lists all 89 skills built for the Hermes Agent system, organized by 33 categories. Last updated July 2026.
+This document lists all 90 skills built for the Hermes Agent system, organized by 33 categories. Last updated July 2026.
 
 ## Summary
 
@@ -8,7 +8,7 @@ This document lists all 89 skills built for the Hermes Agent system, organized b
 |----------|-------|
 | apple | 1 |
 | apple-reminders | 1 |
-| autonomous-ai-agents | 9 |
+| autonomous-ai-agents | 10 |
 | computer-use | 1 |
 | creative | 3 |
 | data-science | 1 |
@@ -39,7 +39,7 @@ This document lists all 89 skills built for the Hermes Agent system, organized b
 | sub-agent-dispatch | 1 |
 | ultrahuman-insights | 1 |
 | yuanbao | 1 |
-| **Total** | **89** |
+| **Total** | **90** |
 
 ## apple (1 skill)
 
@@ -53,7 +53,7 @@ This document lists all 89 skills built for the Hermes Agent system, organized b
 |-------|-------------|
 | apple-reminders | Manage Apple Reminders via `remindctl` CLI on macOS |
 
-## autonomous-ai-agents (9 skills)
+## autonomous-ai-agents (10 skills)
 
 Orchestration, delegation, and parallel agent coordination.
 
@@ -67,6 +67,7 @@ Orchestration, delegation, and parallel agent coordination.
 | hermes-gateway-ops | Hermes gateway operations, platform maintenance, troubleshooting |
 | kanban-orchestrator | Kanban orchestrator role |
 | kanban-worker | Kanban worker role |
+| memelord | Delegate Discord meme work (image gen, GIF search, captions) to a sub-agent |
 | opencode | Delegate coding to OpenCode CLI |
 | staged-idea-to-claude-workflow | Two-stage: ideation/planning first, then execution |
 | tailscale-mac-remote-access | Tailscale remote access to Mac Mini |
