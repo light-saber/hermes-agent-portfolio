@@ -1,6 +1,6 @@
 # Hermes Agent Portfolio
 
-A personal AI assistant agent system built with Hermes Agent, showcasing 145+ specialized skills across 52 categories, a 10-specialist sub-agent roster (each a real Hermes profile), ~30 active automated workflows, and deep multi-platform integration.
+A personal AI assistant agent system built with Hermes Agent, showcasing 150+ specialized skills across 53 categories, a 10-specialist sub-agent roster (each a real Hermes profile), ~30 active automated workflows, and deep multi-platform integration.
 
 ## What This Is
 
@@ -10,7 +10,7 @@ A production-grade personal AI agent system — not a demo, not a toy. It's buil
 
 | Dimension | Detail |
 |-----------|--------|
-| **Skills** | ~145 across 52 categories (active; archived/pruned excluded) |
+| **Skills** | ~150 across 53 categories (active; archived/pruned excluded) |
 | **Cron Jobs** | ~30 active (38 registered; recurring + one-shot) |
 | **Sub-agents** | 10 specialists dispatched via `delegate_task` |
 | **Profiles** | `default` + 10 specialist profiles (each sub-agent is a Bot) |
@@ -28,7 +28,7 @@ Momo is the orchestrator. For non-trivial work, Momo dispatches to a specialist 
 
 | # | Agent | Domain | Profile / skills |
 |---|-------|--------|------------------|
-| 1 | **MacPilot** | Drives Sachin's Mac — Safari, files, screenshots, macOS shell (SSH + AppleScript + CDP over Tailscale) | `macpilot`, `computer-use`, `tailscale-mac-remote-access` |
+| 1 | **MacPilot** | Drives the user's Mac — Safari, files, screenshots, macOS shell (SSH + AppleScript + CDP over Tailscale) | `macpilot`, `computer-use`, `tailscale-mac-remote-access` |
 | 2 | **StockMan** | Ad-hoc equity research, "should I buy X", thesis reviews, sector deep-dives, daily portfolio prediction | `stockman`, `stock-prediction-model` |
 | 3 | **TaxBuddy** | Form16/26AS/AIS reconciliation, capital gains, ITR-2 prep & advance-tax | `tax-assist` profile, `india-rsu-tax-filing` |
 | 4 | **HomeBase** | Property escalations (builders, society), home loan amortization, watchdog duty | `homebase` profile, case files under `~/.hermes/cases/homebase/` |
@@ -51,7 +51,7 @@ A dedicated financial-analysis stack that runs every trading day:
 - **Portfolio activity watchdog** — low-noise price/volume anomaly alerts (NSE intraday, NSE close, WMT close)
 - **Minitrader** — dual long-term portfolio (live + paper) on Zerodha Kite, CNC-only, human-in-the-loop buy gate, Nifty50 benchmark
 - **IBKR tracker** — daily Interactive Brokers portfolio snapshot
-- **Monthly** — Piotroski F-Score + combined quality/momentum screeners across NSE/US
+- **Monthly** — Piotroski F-Score + quality/momentum screeners with forward-view analyst/news corroboration, across NSE/US
 - Holdings and positions stored privately — never committed to this repo
 
 ### 📰 AI Ecosystem Monitoring
@@ -79,7 +79,7 @@ Local LLM inference (llama.cpp, vLLM), HuggingFace model management, benchmark h
 
 ## Skills Overview
 
-See [SKILLS.md](SKILLS.md) for the full inventory — **145 active skills across 52 categories** (last-generation, archived skills excluded). Top categories by count: productivity (27), software-development (17), research (11), autonomous-ai-agents (10), financial-analysis (8), media (7), mlops (6).
+See [SKILLS.md](SKILLS.md) for the full inventory — **150 active skills across 53 categories** (last-generation, archived skills excluded). Top categories by count: productivity (28), software-development (18), research (11), autonomous-ai-agents (10), financial-analysis (8), media (7), mlops (6).
 
 ## Active Cron Jobs (~30)
 
@@ -104,7 +104,7 @@ See [SKILLS.md](SKILLS.md) for the full inventory — **145 active skills across
 | Track Hermes clarify PRs | every 6h | Watch upstream Hermes PRs | origin |
 | Alisha Friday cab nudge | 9:00am IST Fri | WhatsApp group nudge | origin |
 | Office arrival lunch/breakfast asks | wkdays, gated by OwnTracks | Breakfast/lunch WhatsApp pokes | local |
-| Monthly stock screeners | 1st of month | Piotroski + quality/momentum, NSE+US | origin |
+| Monthly stock screeners | 1st of month | Piotroski + quality/momentum + forward view, NSE+US | origin |
 | HSBC Premier Monthly Brief | 1st of month | Credit card spend brief | Discord |
 | Subscription audit | 1st of month, 10am | Recurring-spend audit from email | Discord |
 | Memory-system watchdog | every 6h | OpenViking backend health | Discord |
@@ -132,8 +132,8 @@ The system has four main layers, plus a sub-agent dispatch layer:
         ▼                ▼                      ▼
   ┌──────────┐    ┌──────────────┐    ┌──────────────────┐
   │10 Sub-   │    │  Skill System │    │  Memory Layer    │
-  │ agents   │    │  145 skills   │    │  Hermes + Open   │
-  │(delegate)│    │  52 cats      │    │  Viking          │
+  │ agents   │    │  150 skills   │    │  Hermes + Open   │
+  │(delegate)│    │  53 cats      │    │  Viking          │
   └──────────┘    └──────────────┘    └──────────────────┘
         │
         ├─▶ MacPilot / StockMan / TaxBuddy / HomeBase /

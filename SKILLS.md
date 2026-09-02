@@ -1,6 +1,6 @@
 # Skills Inventory
 
-This document inventories the active skills in the Hermes Agent system, organized by category. Last updated August 2026.
+This document inventories the active skills, organized by category. Generated from the live skills tree; `.archive/` excluded.
 
 ## Summary
 
@@ -32,7 +32,7 @@ This document inventories the active skills in the Hermes Agent system, organize
 | mlops | 6 |
 | note-taking | 1 |
 | openviking-admin | 1 |
-| productivity | 27 |
+| productivity | 28 |
 | qwencloud-audio-tts | 1 |
 | qwencloud-deploy | 1 |
 | qwencloud-image-generation | 1 |
@@ -48,18 +48,19 @@ This document inventories the active skills in the Hermes Agent system, organize
 | reference | 1 |
 | research | 11 |
 | ship-it-workflow | 1 |
-| smart-home | 3 |
+| smart-home | 5 |
 | social-media | 2 |
-| software-development | 17 |
+| software-development | 18 |
 | static-site-to-github-pages | 1 |
 | sub-agent-guardrails | 1 |
 | sub-agent-personalities | 1 |
 | sub-agents | 1 |
 | ultrahuman-insights | 1 |
 | wa-bridge-send | 2 |
+| web | 1 |
 | web-hosting | 1 |
-| **Total categories** | **52** |
-| **Total skills** | **145** |
+| **Total categories** | **53** |
+| **Total skills** | **150** |
 
 ## agent-orchestration (1 skills)
 
@@ -146,19 +147,19 @@ This document inventories the active skills in the Hermes Agent system, organize
 
 | Skill | Description |
 |-------|-------------|
-| familydoc | Family doctor for Sachin's family. Use in #life-tracker. |
-| pregnancy-milestone-tracker | Use when updating Vipanchika's pregnancy tracker or crons. |
+| familydoc | Family health assistant for household dependents (children, pregnancy milestones). |
+| pregnancy-milestone-tracker | Use when updating the pregnancy milestone tracker or related crons. |
 
 ## financial-analysis (8 skills)
 
 | Skill | Description |
 |-------|-------------|
 | hsbc-credit-card-manager | HSBC India Premier Mastercard optimization and rewards specialist. Use whenever the user asks about HSBC Premier card usage, ma... |
-| ibkr-portfolio-via-claude-cli | Pull Sachin's IBKR portfolio via Claude Code CLI + IBKR MCP. |
+| ibkr-portfolio-via-claude-cli | Pull the user's IBKR portfolio via Claude Code CLI + IBKR MCP. |
 | india-rsu-tax-filing | Walk through ITR-2 filing for Indian salaried employees with US RSUs, including DTAA relief and Form 10E. |
-| portfolio-activity-watchdog | Build and operate Sachin's low-noise price/volume anomaly monitor for Indian holdings and WMT. |
+| portfolio-activity-watchdog | Build and operate a low-noise price/volume anomaly monitor for Indian holdings and WMT. |
 | portfolio-management | Portfolio monitoring, planning, and presentation workflows. |
-| stock-prediction-model | Sachin's portfolio prediction model — updated daily based on market feedback |
+| stock-prediction-model | Multi-signal portfolio prediction model — updated daily based on market feedback |
 | stockman | Focused financial analyst for stock analysis, screening, and research |
 | subscription-audit | Use when user asks what subscriptions they have from email. |
 
@@ -203,7 +204,7 @@ This document inventories the active skills in the Hermes Agent system, organize
 
 | Skill | Description |
 |-------|-------------|
-| mac-messaging-imessage | Send iMessage via Mac Messages.app. Use when Sachin asks. |
+| mac-messaging-imessage | Send iMessage via Mac Messages.app. Use when the user asks. |
 | mac-safari-automation | Use when driving a Mac's Safari over SSH to bootstrap OAuth. |
 | mac-whatsapp-web | Send WhatsApp group message via WhatsApp Web on the Mac. |
 
@@ -254,10 +255,11 @@ This document inventories the active skills in the Hermes Agent system, organize
 |-------|-------------|
 | openviking-admin | Admin OpenViking at 127.0.0.1:1933. L0/L1, VLM, backfill. |
 
-## productivity (27 skills)
+## productivity (28 skills)
 
 | Skill | Description |
 |-------|-------------|
+| archify-diagram | Visualize a setup as an interactive archify diagram. |
 | box | Box manages cloud files, sharing, search, and metadata. |
 | discord-channel-document-archive | Archive every document shared in a Discord channel or email thread into a durable, profile-aware, OpenViking-indexed store with... |
 | document-to-action-items | Extract cited obligations, deadlines, tasks from documents. |
@@ -267,21 +269,21 @@ This document inventories the active skills in the Hermes Agent system, organize
 | hospital-portal-booking | Automate appointment booking on Indian hospital web portals (Manipal, Apollo, Fortis, Max, etc.) for outpatient consultations. ... |
 | india-salaried-tax-itr2 | Indian salaried ITR-2 prep for FY2025-26 onward. |
 | indian-financial-civic-workflows | India-specific financial and civic data workflows. |
-| linkedin-technical-article | Draft a LinkedIn article for Sachin. |
+| linkedin-technical-article | Draft a LinkedIn article for the user. |
 | maps | Geocode, POIs, routes, timezones via OpenStreetMap/OSRM. |
 | markitdown | Use when converting PDF, PowerPoint, Word, Excel, images, or other office documents to Markdown for analysis. Converts files to... |
 | nano-pdf | Edit text in existing PDFs via natural-language prompts. |
 | notion | Notion API + ntn CLI: pages, databases, markdown, Workers. |
 | ocr-and-documents | Extract text from PDFs/scans (pymupdf, marker-pdf). |
-| owntracks-location-pipeline | Read Sachin's live GPS from the OwnTracks MQTT broker. |
-| pdf | Create, read, merge, fill, and secure PDF files. |
-| personalized-assistance-profile | Apply persistent user preferences and context when assisting Sachin across sessions. |
+| owntracks-location-pipeline | Read the user's live GPS from the OwnTracks MQTT broker. |
+| pdf | PDF files: create, read, merge, fill, OCR, edit text. |
+| personalized-assistance-profile | Apply persistent user preferences and context when assisting across sessions. |
 | petdex | Install and select animated petdex mascots for Hermes. |
 | powerpoint | Create, read, edit .pptx decks, slides, notes, templates. |
 | product-price-monitor | Watch product, flight, or listing prices; alert on target. |
-| sachin-google-workspace-access | Access Sachin's Google Workspace (Gmail, Drive, Sheets). |
+| sachin-google-workspace-access | Access the user's Google Workspace (Gmail, Drive, Sheets). |
 | session-librarian | Organize sessions by prompt: find, rename, archive, prune. |
-| therapybooking-website | Maintain therapybooking.in and its booking flow. |
+| therapybooking-website | Maintain the psychology-practice booking website and its flow. |
 | tui-widgets | Author live widget apps for the Hermes TUI dock. |
 | weekly-review-planning | Weekly reset: commitments, stalled work, next-week plan. |
 | xlsx | Create, read, edit Excel .xlsx workbooks and CSVs. |
@@ -369,7 +371,6 @@ This document inventories the active skills in the Hermes Agent system, organize
 | Skill | Description |
 |-------|-------------|
 | arxiv | Search arXiv papers by keyword, author, category, or ID. |
-| blocked-page-recovery | Recover blocked/paywalled/WAF'd pages via fallbacks. |
 | blogwatcher | Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool. |
 | compare-flights | Use when the user wants to find, compare, and shortlist flight fares across airlines, cabins, nonstop/connecting options, or da... |
 | competitor-news-monitor | Watch named companies for material news; cited digests. |
@@ -377,6 +378,7 @@ This document inventories the active skills in the Hermes Agent system, organize
 | grounded-citations | Ground answers and documents in cited, verifiable sources. |
 | llm-wiki | Karpathy's LLM Wiki: build/query interlinked markdown KB. |
 | polymarket | Query Polymarket: markets, prices, orderbooks, history. |
+| reddit-noauth-read | Read Reddit via redlib proxy when OAuth is unavailable. |
 | reddit-readonly | Read-only Reddit via OAuth. No posting. |
 | stock-price | Use when looking up current or historical stock prices for NSE (India) or US exchanges. Fetches live data via yfinance. |
 
@@ -386,13 +388,15 @@ This document inventories the active skills in the Hermes Agent system, organize
 |-------|-------------|
 | ship-it-workflow | Close the loop on fix requests. Run, verify, report. |
 
-## smart-home (3 skills)
+## smart-home (5 skills)
 
 | Skill | Description |
 |-------|-------------|
-| bosch-wpg23108in-tumble-dryer | Use when Sachin asks about the WPG23108IN tumble dryer. |
+| bosch-wpg23108in-tumble-dryer | Use when the user asks about the WPG23108IN tumble dryer. |
+| mg-ismart-car | Use when the user asks for MG ZS EV car details (SOC etc). |
 | openhue | Control Philips Hue lights, scenes, rooms via OpenHue CLI. |
 | owntracks-location-sharing | Self-hosted phone GPS the assistant can query via MQTT. |
+| panasonic-nn-ct645-microwave | Use when the user asks about the Panasonic NN-CT645 oven. |
 
 ## social-media (2 skills)
 
@@ -401,13 +405,14 @@ This document inventories the active skills in the Hermes Agent system, organize
 | discord-post | Post messages to Discord channels from a cron job or external script using the Hermes Discord bot token + Discord REST API. Use... |
 | xurl | X/Twitter via xurl CLI: raw post search, posting, DM, media. |
 
-## software-development (17 skills)
+## software-development (18 skills)
 
 | Skill | Description |
 |-------|-------------|
 | coding-agent-dispatch | Briefs and recovery for multi-phase coding-agent builds. |
 | dogfood | Exploratory QA of web apps: find bugs, evidence, reports. |
 | filesystem-inventory-checks | When the task is reporting an inventory (skill count, cron count, file count, repo size), count from the live filesystem before... |
+| github | GitHub via gh CLI: PRs, issues, reviews, repos, auth. |
 | hermes-agent-skill-authoring | Author in-repo SKILL.md files: frontmatter and structure. |
 | iframe-embedded-third-party-qa | QA third-party iframes (booking, payment, scheduling, video, chat). Blank, click-intercept, overlay. Complements dogfood. |
 | independent-diff-review | Use for read-only review of an uncommitted local diff. |
@@ -445,7 +450,7 @@ This document inventories the active skills in the Hermes Agent system, organize
 
 | Skill | Description |
 |-------|-------------|
-| macpilot | MacPilot drives Sachin's Mac via SSH+AppleScript+CDP. |
+| macpilot | MacPilot drives the user's Mac via SSH+AppleScript+CDP. |
 
 ## ultrahuman-insights (1 skills)
 
@@ -460,6 +465,12 @@ This document inventories the active skills in the Hermes Agent system, organize
 | wa-bridge-read | Read recent WhatsApp group/chat messages via wa-bridge. |
 | wa-bridge-send | Use when sending any WhatsApp message via the VPS wa-bridge. |
 
+## web (1 skills)
+
+| Skill | Description |
+|-------|-------------|
+| blocked-page-recovery | Use when a fetch fails: 403/429, paywall, WAF, bot wall. |
+
 ## web-hosting (1 skills)
 
 | Skill | Description |
@@ -468,4 +479,4 @@ This document inventories the active skills in the Hermes Agent system, organize
 
 ---
 
-*Last updated: August 2026 — 145 skills across 52 categories.*
+*Last updated from disk: 150 skills across 53 categories.*

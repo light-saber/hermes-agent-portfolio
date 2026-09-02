@@ -11,7 +11,7 @@ High-level system architecture for the Hermes Agent personal assistant system. L
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
 │  │  Skills  │  │  Memory  │  │  Cron    │  │   MCP    │    │
 │  │ System   │  │  Layer   │  │Scheduler │  │  Tools   │    │
-│  │ 145 / 52 │  │ 2-tier   │  │ ~30 jobs │  │          │    │
+│  │ 150 / 52 │  │ 2-tier   │  │ ~30 jobs │  │          │    │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘    │
 │       │             │             │             │           │
 │  ┌────┴─────────────┴─────────────┴─────────────┴────┐     │
@@ -52,7 +52,7 @@ Momo delegates non-trivial work to one of ten specialist sub-agents via `delegat
 
 | # | Agent | Domain |
 |---|-------|--------|
-| 1 | **MacPilot** | Drives Sachin's Mac (Safari, files, screenshots, shell) over Tailscale — SSH + AppleScript + CDP |
+| 1 | **MacPilot** | Drives the user's Mac (Safari, files, screenshots, shell) over Tailscale — SSH + AppleScript + CDP |
 | 2 | **StockMan** | Equity research, thesis reviews, sector deep-dives, daily portfolio prediction |
 | 3 | **TaxBuddy** | Form16/26AS reconciliation, capital gains, ITR-2 prep, advance tax (profile: `tax-assist`) |
 | 4 | **HomeBase** | Property escalations, home loan amortization, watchdog duties |
@@ -65,7 +65,7 @@ Momo delegates non-trivial work to one of ten specialist sub-agents via `delegat
 
 The dispatch playbook lives in the `agent-orchestration` skill; `sub-agent-personalities` defines each agent's voice; `sub-agent-guardrails` holds hard rules. Default behavior: any multi-step or research-heavy ask → dispatch to the matching agent. Inline: simple Q&A, single tool calls, cron-managed workflows.
 
-### 3. Skills System (~145 skills, 52 categories)
+### 3. Skills System (~150 skills, 53 categories)
 - **Purpose**: Modular capability packages — each skill is a self-contained workflow
 - **Structure**: `SKILL.md` (definition/prereqs/commands/pitfalls) + optional `references/`, `templates/`, `scripts/`
 - **Loading**: On-demand per task (not all loaded at startup)
@@ -229,7 +229,7 @@ Daily brief at 7am IST: `arxiv` (recent ML/AI papers), `blogwatcher` (RSS/AI blo
 | Trading | Zerodha Kite MCP (+ yfinance fallback), IBKR MCP, Minitrader |
 | Remote ops | Mac Mini over Tailscale (SSH, AppleScript, CDP) |
 | Hosting | Linux VPS (Hostinger) |
-| Skill Count | ~145 across 52 categories (active) |
+| Skill Count | ~150 across 53 categories (active) |
 
 ## Scalability Profile
 
@@ -244,7 +244,7 @@ Daily brief at 7am IST: `arxiv` (recent ML/AI papers), `blogwatcher` (RSS/AI blo
 - Reliable long-running automation, including script-only watchdogs
 - Cross-platform message routing with India-specific constraints (Telegram ban)
 - Self-hosted production infra (MQTT location, wa-bridge, Tailscale Mac access)
-- Composable skill architecture (145 active skills)
+- Composable skill architecture (150 active skills)
 - Security-conscious configuration
 
 ---
