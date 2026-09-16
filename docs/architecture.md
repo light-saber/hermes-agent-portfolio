@@ -1,6 +1,6 @@
 # Hermes Agent Architecture
 
-High-level system architecture for the Hermes Agent personal assistant system. Last updated: August 2026.
+High-level system architecture for the Hermes Agent personal assistant system. Last updated: September 2026.
 
 ## Overview
 
@@ -11,7 +11,7 @@ High-level system architecture for the Hermes Agent personal assistant system. L
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
 │  │  Skills  │  │  Memory  │  │  Cron    │  │   MCP    │    │
 │  │ System   │  │  Layer   │  │Scheduler │  │  Tools   │    │
-│  │ 150 / 52 │  │ 2-tier   │  │ ~30 jobs │  │          │    │
+│  │ 166 / 58 │  │ 2-tier   │  │ ~36 jobs │  │          │    │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘    │
 │       │             │             │             │           │
 │  ┌────┴─────────────┴─────────────┴─────────────┴────┐     │
@@ -65,23 +65,23 @@ Momo delegates non-trivial work to one of ten specialist sub-agents via `delegat
 
 The dispatch playbook lives in the `agent-orchestration` skill; `sub-agent-personalities` defines each agent's voice; `sub-agent-guardrails` holds hard rules. Default behavior: any multi-step or research-heavy ask → dispatch to the matching agent. Inline: simple Q&A, single tool calls, cron-managed workflows.
 
-### 3. Skills System (~150 skills, 53 categories)
+### 3. Skills System (166 skills, 58 categories)
 - **Purpose**: Modular capability packages — each skill is a self-contained workflow
 - **Structure**: `SKILL.md` (definition/prereqs/commands/pitfalls) + optional `references/`, `templates/`, `scripts/`
 - **Loading**: On-demand per task (not all loaded at startup)
 - **Archive**: `.archive/` holds last-generation skills that were absorbed into umbrellas or pruned — excluded from the active count
-- **Categories**: productivity (27), software-development (17), research (11), autonomous-ai-agents (10), financial-analysis (8), media (7), mlops (6), and 45 more
+- **Categories**: productivity (28), software-development (20), research (12), autonomous-ai-agents (10), financial-analysis (8), media (7), mlops (6), and 51 more
 
 ### 4. Memory Layer (Two-Tier)
 - **Tier 1 — Hermes memory** (always-on, ~2,200 chars): fixed-budget buffer injected into every system prompt. Holds durable preferences, rules, pointers.
 - **Tier 2 — OpenViking** (`viking://`): vector-indexed semantic knowledge base (at 127.0.0.1:1933) holding case files, entity profiles, event history, full statements. Retrieved only when searched. Monitored by a watchdog cron.
 - **User Profile**: Preferences, location, work details, tool conventions (never shared externally)
 
-### 5. Cron Scheduler (~30 active jobs, 38 registered)
+### 5. Cron Scheduler (36 scheduled jobs, 41 registered)
 - **Purpose**: Reliable time-based task execution — not just reminders, but full agentic workflows, plus script-only watchdog mode (`no_agent`).
 - **Features**: Recurring and one-shot jobs, multi-platform delivery, script-based watchdogs, model pinning per job.
 - **Note**: cron sessions cannot call `delegate_task` — each cron prompt is a thin self-contained orchestrator.
-- **Highlights**: daily AI brief + newsletter, MailScout expense digest (dedupes card-bill repayments vs consumption), stock predictions + vs-actual, portfolio activity watchdogs (NSE intraday/close, WMT close), IBKR tracker, minitrader paper pick, HomeBase watchdog, pregnancy milestone one-shots, advance-tax reminders, WhatsApp group nudges, OwnTracks-gated office asks, monthly screeners + HSBC brief + subscription audit, memory-system watchdog, upstream PR tracker.
+- **Highlights**: single daily AI brief (Discord + email), MailScout expense digest (dedupes card-bill repayments vs consumption), stock predictions + vs-actual, portfolio activity watchdogs (NSE intraday/close, WMT close), IBKR tracker, minitrader trade monitor, HomeBase watchdog, pregnancy milestone one-shots, advance-tax checks + ULIP reminder, WhatsApp group nudges, OwnTracks-gated office asks + commute tracker, MG EV charge reminders, monthly screeners + HSBC brief + subscription audit, memory-system watchdog, upstream PR tracker.
 
 ### 6. MCP Tools (Model Context Protocol)
 - **Purpose**: Structured integration with external services
@@ -182,7 +182,7 @@ Momo's rule: **multi-step or research-heavy asks go to sub-agents; trivial asks 
 HomeBase is the only watchdog sub-agent with a dedicated cron. Alerts keyed to (case, trigger, deadline, state) so they're idempotent — never use case-level status as a proxy for a deliverable-owned deadline. Case files under `~/.hermes/cases/homebase/`.
 
 ### AI Ecosystem Monitoring
-Daily brief at 7am IST: `arxiv` (recent ML/AI papers), `blogwatcher` (RSS/AI blogs), plus a newsletter email at 8am. GitHub trending via `github-research`.
+Single 8am IST brief (Discord + email): `arxiv` (recent ML/AI papers), `blogwatcher` (RSS/AI blogs). GitHub trending via `github-research`.
 
 ## Security Architecture
 
@@ -229,13 +229,13 @@ Daily brief at 7am IST: `arxiv` (recent ML/AI papers), `blogwatcher` (RSS/AI blo
 | Trading | Zerodha Kite MCP (+ yfinance fallback), IBKR MCP, Minitrader |
 | Remote ops | Mac Mini over Tailscale (SSH, AppleScript, CDP) |
 | Hosting | Linux VPS (Hostinger) |
-| Skill Count | ~150 across 53 categories (active) |
+| Skill Count | 166 across 58 categories (active) |
 
 ## Scalability Profile
 
 ### Current Setup (Single User, Production)
 - Runs autonomously on VPS + Mac — no single point of dependency
-- ~30 cron jobs; 10 specialist sub-agents/Bots available on demand
+- 36 scheduled cron jobs (41 registered: 28 recurring + 8 one-shots); 10 specialist sub-agents/Bots available on demand
 - All platforms connected simultaneously
 - OpenViking KB holds long-term memory; watchdog monitors its health
 
@@ -244,9 +244,9 @@ Daily brief at 7am IST: `arxiv` (recent ML/AI papers), `blogwatcher` (RSS/AI blo
 - Reliable long-running automation, including script-only watchdogs
 - Cross-platform message routing with India-specific constraints (Telegram ban)
 - Self-hosted production infra (MQTT location, wa-bridge, Tailscale Mac access)
-- Composable skill architecture (150 active skills)
+- Composable skill architecture (166 active skills)
 - Security-conscious configuration
 
 ---
 
-*Architecture as of August 2026*
+*Architecture as of September 2026*

@@ -1,6 +1,6 @@
 # Hermes Agent Portfolio
 
-A personal AI assistant agent system built with Hermes Agent, showcasing 150+ specialized skills across 53 categories, a 10-specialist sub-agent roster (each a real Hermes profile), ~30 active automated workflows, and deep multi-platform integration.
+A personal AI assistant agent system built with Hermes Agent, showcasing 166 specialized skills across 58 categories, a 10-specialist sub-agent roster (each a real Hermes profile), 36 scheduled automated workflows, and deep multi-platform integration.
 
 ## What This Is
 
@@ -10,8 +10,8 @@ A production-grade personal AI agent system — not a demo, not a toy. It's buil
 
 | Dimension | Detail |
 |-----------|--------|
-| **Skills** | ~150 across 53 categories (active; archived/pruned excluded) |
-| **Cron Jobs** | ~30 active (38 registered; recurring + one-shot) |
+| **Skills** | 166 across 58 categories (active; archived/pruned excluded) |
+| **Cron Jobs** | 36 scheduled (41 registered: 28 recurring + 8 one-shots; 4 paused, 1 completed) |
 | **Sub-agents** | 10 specialists dispatched via `delegate_task` |
 | **Profiles** | `default` + 10 specialist profiles (each sub-agent is a Bot) |
 | **Platforms** | Discord, WhatsApp (wa-bridge), Telegram, Photon (iMessage), Mac (MacPilot) |
@@ -55,7 +55,7 @@ A dedicated financial-analysis stack that runs every trading day:
 - Holdings and positions stored privately — never committed to this repo
 
 ### 📰 AI Ecosystem Monitoring
-Daily brief (7:00am IST) covering AI trends, OSS momentum, and developer tooling, plus a daily AI newsletter email (delivered to inbox).
+Daily brief (8:00am IST) covering AI trends, OSS momentum, and developer tooling, delivered as one brief to Discord plus an HTML email digest.
 
 ### 🏠 HomeBase (watchdog duties)
 Daily watchdog cron — checks open property escalations (e.g., delayed builder handovers with hard deadlines) and alerts when deadlines approach. Case files live under `~/.hermes/cases/homebase/` and are keyed by deliverable, not just case state (alerts are idempotent by case+trigger+deadline+state).
@@ -68,6 +68,9 @@ Daily watchdog cron — checks open property escalations (e.g., delayed builder 
 ### 🏥 Family & Health
 FamilyDoc triages symptoms (every diagnosis tagged "AI diagnosis"); HealthGuard owns insurance/claims/vaccines; a **pregnancy milestone tracker** schedules NT/anomaly/GTT/Tdap/term reminders; Ultrahuman ring data syncs and delivers insights daily.
 
+### 🛒 Shopping & Smart Home
+Amazon ordering through the Mac over CDP (including re-adding past purchases), a Swiggy/Zepto grocery dual-cart layer, and smart-home integrations: MG ZS EV telemetry (charge reminders, drive logging), Philips Hue via OpenHue, and appliance guides (microwave, tumble dryer).
+
 ### 🎨 Creative & Media
 Image/video generation, infographics/architecture diagrams, ASCII art/video, GIF sourcing, song generation (HeartMuLa), audio spectrograms, meme sourcing, YouTube transcripts.
 
@@ -79,14 +82,13 @@ Local LLM inference (llama.cpp, vLLM), HuggingFace model management, benchmark h
 
 ## Skills Overview
 
-See [SKILLS.md](SKILLS.md) for the full inventory — **150 active skills across 53 categories** (last-generation, archived skills excluded). Top categories by count: productivity (28), software-development (18), research (11), autonomous-ai-agents (10), financial-analysis (8), media (7), mlops (6).
+See [SKILLS.md](SKILLS.md) for the full inventory — **166 active skills across 58 categories** (last-generation, archived skills excluded). Top categories by count: productivity (28), software-development (20), research (12), autonomous-ai-agents (10), financial-analysis (8), media (7), mlops (6).
 
-## Active Cron Jobs (~30)
+## Active Cron Jobs (36 scheduled)
 
 | Job | Schedule | Purpose | Delivery |
 |-----|----------|---------|----------|
-| Daily AI Ecosystem Brief | 7:00am IST | AI trends, OSS momentum, dev tools | Discord #home |
-| Daily AI Newsletter Email | 8:00am IST | Same brief as HTML email digest | inbox |
+| Daily AI Brief (Discord + Email) | 8:00am IST | Single brief: condensed Discord post + HTML email digest | Discord #home + inbox |
 | Daily WMT Stock Price | 6:00am IST (Mon–Fri) | Walmart price tracking | Discord |
 | Ultrahuman sync + insights | 6:30am IST | Ring data sync, delivers only when noteworthy | Discord |
 | Morning Prediction | 9:00am IST (Mon–Fri) | StockMan portfolio forecast | origin |
@@ -97,20 +99,22 @@ See [SKILLS.md](SKILLS.md) for the full inventory — **150 active skills across
 | Portfolio watchdog — NSE close | 3:45pm IST (Mon–Fri) | EOD anomaly digest | Discord |
 | Portfolio watchdog — WMT close | 9:45pm IST (Mon–Fri) | US EOD anomaly digest | Discord |
 | IBKR portfolio tracker | 9:30pm IST (Mon–Fri) | Daily IBKR holdings snapshot | Discord |
-| Minitrader paper pick | 9:30am IST (Mon–Fri) | Paper-portfolio build pick | Discord |
+| Minitrader trade monitor | 9:30am IST (Mon–Fri) | TRADE #2 paper-portfolio monitor + 3-day reviews (GTT stops/targets) | Discord |
 | Pregnancy week check-in | 9:00pm IST Sun | Gestational week nudge | Discord |
-| NT scan booking reminder | 9:00am IST (one-shot) | Pre-NT-scan booking nudge | origin |
-| Advance tax reminders | Sep/TAR-quarterly | Q2 top-up (~₹14K by Sep 15), quarterly 234C check | origin |
+| NT scan booking confirm | 9:00am IST (one-shot) | Pre-NT-scan booking nudge | Discord |
+| Advance tax checks + reminders | Jun/Sep/Dec + one-shots | Quarterly 234C check; Q3 reminder ahead of Dec 15 due; ULIP lock-in exit (2027) | origin |
 | Track Hermes clarify PRs | every 6h | Watch upstream Hermes PRs | origin |
 | Alisha Friday cab nudge | 9:00am IST Fri | WhatsApp group nudge | origin |
 | Office arrival lunch/breakfast asks | wkdays, gated by OwnTracks | Breakfast/lunch WhatsApp pokes | local |
+| MG EV charge reminder | 9am / 2pm / 8pm IST | Low-range charge nudge from MG ZS EV telemetry | origin |
+| Commute tracker + notify | every 2m / webhook | Home/office transition detection; phone notify on change | local / Photon |
 | Monthly stock screeners | 1st of month | Piotroski + quality/momentum + forward view, NSE+US | origin |
 | HSBC Premier Monthly Brief | 1st of month | Credit card spend brief | Discord |
 | Subscription audit | 1st of month, 10am | Recurring-spend audit from email | Discord |
 | Memory-system watchdog | every 6h | OpenViking backend health | Discord |
 | Pregnancy milestone one-shots | NT/anomaly/GTT/Tdap/term | Scan-window reminders | Discord |
 
-Plus several completed one-shot jobs (cough follow-up, tax reminders, nameplate nudges). Paused: daily memes, Minitrader live pick.
+Plus several completed one-shot jobs (clinic nudges, nameplate reminders). Paused: daily memes, the standalone 7:00am AI brief (merged into the 8:00am brief), Minitrader live pick, MG car drive logger.
 
 ## Architecture
 
@@ -132,8 +136,8 @@ The system has four main layers, plus a sub-agent dispatch layer:
         ▼                ▼                      ▼
   ┌──────────┐    ┌──────────────┐    ┌──────────────────┐
   │10 Sub-   │    │  Skill System │    │  Memory Layer    │
-  │ agents   │    │  150 skills   │    │  Hermes + Open   │
-  │(delegate)│    │  53 cats      │    │  Viking          │
+  │ agents   │    │  166 skills   │    │  Hermes + Open   │
+  │(delegate)│    │  58 cats      │    │  Viking          │
   └──────────┘    └──────────────┘    └──────────────────┘
         │
         ├─▶ MacPilot / StockMan / TaxBuddy / HomeBase /
@@ -142,7 +146,7 @@ The system has four main layers, plus a sub-agent dispatch layer:
         │
 ┌───────▼───────────────────────────────────────────┐
 │        Cron Scheduler + MCP + External Ops         │
-│  ~30 jobs · Kite · IBKR · GitHub · Discord · Hue   │
+│  ~36 jobs · Kite · IBKR · GitHub · Discord · Hue   │
 │  WhatsApp wa-bridge · OwnTracks MQTT · Mac SSH     │
 └───────────────────────────────────────────────────┘
 ```
@@ -219,4 +223,4 @@ MIT License — feel free to use as inspiration for your own projects.
 
 ---
 
-*Built with Hermes Agent by Nous Research. Last updated August 2026.*
+*Built with Hermes Agent by Nous Research. Last updated September 2026.*
