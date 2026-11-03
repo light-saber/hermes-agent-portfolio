@@ -5,7 +5,7 @@ Public-facing portfolio showcasing the Hermes Agent system. Not a working codeba
 
 ## What This Repo Is
 - README.md — high-level overview for visitors
-- SKILLS.md — full inventory of 88 skills across 28 categories
+- SKILLS.md — generated inventory of installed shared skills; counts must be regenerated from disk
 - docs/architecture.md — technical architecture (sub-agent layer included)
 - skills/ — skill examples and templates
 
@@ -16,10 +16,11 @@ Public-facing portfolio showcasing the Hermes Agent system. Not a working codeba
 
 ## Conventions for Updates
 - Skills count and category counts must match current state
-- All timestamps in documentation should use "July 2026"
+- Update review dates to the actual month and year; do not leave stale fixed-date instructions
 - Cron job schedules can be described generically (e.g., "daily at 7am IST") without exposing internal IDs
 - Platform names: Discord, Telegram, Photon (iMessage) — don't expose channel IDs
-- **Sub-agent section**: when adding/removing a sub-agent (StockMan, TaxBuddy, HomeBase, HealthGuard, CodeForge, Researcher), update README.md and docs/architecture.md in the same commit. Keep the roster table in sync with the `sub-agent-dispatch` skill.
+- **Specialist section**: when adding/removing a `delegate_task` agent or a profile-based specialist, update README.md, docs/architecture.md, the config reference, and SKILLS.md when the shared installed-skill inventory changes. Keep dispatch routing explicit: not every specialist uses `delegate_task`.
+- Keep runtime facts source-backed. Record provider/model defaults separately from profile, cron, and auxiliary overrides; never claim every job/profile uses the default unless verified.
 
 ## Branch
 - Default: `master`

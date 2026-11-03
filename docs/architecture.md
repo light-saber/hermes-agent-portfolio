@@ -1,6 +1,6 @@
 # Hermes Agent Architecture
 
-High-level system architecture for the Hermes Agent personal assistant system. Last updated: September 2026.
+High-level system architecture for the Hermes Agent personal assistant system. Last reviewed: November 2026.
 
 ## Overview
 
@@ -11,19 +11,19 @@ High-level system architecture for the Hermes Agent personal assistant system. L
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
 │  │  Skills  │  │  Memory  │  │  Cron    │  │   MCP    │    │
 │  │ System   │  │  Layer   │  │Scheduler │  │  Tools   │    │
-│  │ 166 / 58 │  │ 2-tier   │  │ ~36 jobs │  │          │    │
+│  │ 140 / 61 │  │ 2-tier   │  │34 enabled│  │          │    │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘    │
 │       │             │             │             │           │
 │  ┌────┴─────────────┴─────────────┴─────────────┴────┐     │
-│  │          Tool Orchestration + Sub-agent          │     │
-│  │          Dispatch Layer (10 specialists)         │     │
+│  │          Tool Orchestration + Specialist          │     │
+│  │   Dispatch Layer (10 agents + profile worker)     │     │
 │  └─────────────────────┬───────────────────────────┘     │
 ├────────────────────────┼──────────────────────────────────┤
 │            ┌───────────┴───────────┐                      │
 │            │    LLM Providers      │                      │
-│            │ Alibaba/DashScope     │                      │
-│            │ (DeepSeek V4 Flash)   │                      │
-│            │ + Nous aux/image      │                      │
+│            │ Nous                  │                      │
+│            │ openai/gpt-6-luna      │                      │
+│            │ + profile overrides    │                      │
 │            └──────────────────────┘                      │
 └─────────────────────────────────────────────────────────────┘
                             │
@@ -44,13 +44,15 @@ High-level system architecture for the Hermes Agent personal assistant system. L
 ### 1. Hermes Agent Core — Momo (Chief of Staff)
 - **Purpose**: Main agent orchestrator and primary chat-facing persona. Routes requests, manages conversation state, coordinates tool execution, and dispatches to sub-agents.
 - **Responsibilities**: LLM interaction, tool call sequencing, error handling, multi-turn reasoning, sub-agent dispatch
-- **Provider**: Alibaba (DeepSeek V4 Flash via DashScope) for the main agent and all crons; Nous for image generation and auxiliary vision/web-extract/compression.
+- **Provider**: Nous. Main agent and delegation default to `openai/gpt-6-luna`; profile and cron overrides are explicit. Auxiliary vision, compression, and web extraction use `meituan/longcat-2.5-preview:free` on Nous. The wildlife caption worker is a separate `wildlifephoto` profile with its own model route.
 
-### 2. Sub-agent Roster (10 specialists)
+### 2. Specialist Roster (10 `delegate_task` agents + 1 profile worker)
 
-Momo delegates non-trivial work to one of ten specialist sub-agents via `delegate_task`. Each operates in an isolated context window, returns a clean summary, and also runs as a real Hermes profile (a desktop Bot). Roster: MacPilot, StockMan, TaxBuddy, HomeBase, HealthGuard, FamilyDoc, CodeForge, Researcher, QABot, HSBC Card Manager.
+Momo delegates non-trivial work to ten specialist agents via `delegate_task`. Each operates in an isolated context window and returns a clean summary. Wildlife-photo caption drafting follows a distinct route: a local helper sends image observations and only actually extracted EXIF to the dedicated `wildlifephoto` profile, which returns drafts and never publishes. Specialist profiles are also available as Hermes desktop Bots.
 
-| # | Agent | Domain |
+See [specialist routing](specialists.md) for the dispatch boundary, role list, and guardrails.
+
+| # | Specialist | Domain / route |
 |---|-------|--------|
 | 1 | **MacPilot** | Drives the user's Mac (Safari, files, screenshots, shell) over Tailscale — SSH + AppleScript + CDP |
 | 2 | **StockMan** | Equity research, thesis reviews, sector deep-dives, daily portfolio prediction |
@@ -62,26 +64,27 @@ Momo delegates non-trivial work to one of ten specialist sub-agents via `delegat
 | 8 | **Researcher** | Multi-source deep dives with citations |
 | 9 | **QABot** | QA after builds — dogfood browser testing, evidence-led verdicts |
 | 10 | **HSBC Card Manager** | HSBC Premier credit card statement analysis & rewards |
+| 11 | **Feather / WildlifePhoto** | Image-grounded wildlife caption drafting; separate profile worker, draft-only |
 
-The dispatch playbook lives in the `agent-orchestration` skill; `sub-agent-personalities` defines each agent's voice; `sub-agent-guardrails` holds hard rules. Default behavior: any multi-step or research-heavy ask → dispatch to the matching agent. Inline: simple Q&A, single tool calls, cron-managed workflows.
+The `agent-orchestration` skill defines dispatch. `sub-agent-personalities` defines agent voice; `sub-agent-guardrails` holds hard rules. Wildlife captions use a separate helper and profile, not `delegate_task`. Default behavior: multi-step or research-heavy asks go to the matching specialist; simple Q&A, single tool calls, and cron-managed workflows stay inline.
 
-### 3. Skills System (166 skills, 58 categories)
+### 3. Skills System (140 registered shared skills, 61 registry categories)
 - **Purpose**: Modular capability packages — each skill is a self-contained workflow
 - **Structure**: `SKILL.md` (definition/prereqs/commands/pitfalls) + optional `references/`, `templates/`, `scripts/`
 - **Loading**: On-demand per task (not all loaded at startup)
-- **Archive**: `.archive/` holds last-generation skills that were absorbed into umbrellas or pruned — excluded from the active count
-- **Categories**: productivity (28), software-development (20), research (12), autonomous-ai-agents (10), financial-analysis (8), media (7), mlops (6), and 51 more
+- **Archive**: `.archive/` holds last-generation skills that were absorbed into umbrellas or pruned — excluded from the count. Profile-local skills are separate from the shared installed-skill inventory.
+- **Largest top-level categories**: productivity (20), software-development (12), research (11), financial-analysis (10), autonomous-ai-agents (8), smart-home (6)
 
 ### 4. Memory Layer (Two-Tier)
 - **Tier 1 — Hermes memory** (always-on, ~2,200 chars): fixed-budget buffer injected into every system prompt. Holds durable preferences, rules, pointers.
 - **Tier 2 — OpenViking** (`viking://`): vector-indexed semantic knowledge base (at 127.0.0.1:1933) holding case files, entity profiles, event history, full statements. Retrieved only when searched. Monitored by a watchdog cron.
 - **User Profile**: Preferences, location, work details, tool conventions (never shared externally)
 
-### 5. Cron Scheduler (36 scheduled jobs, 41 registered)
-- **Purpose**: Reliable time-based task execution — not just reminders, but full agentic workflows, plus script-only watchdog mode (`no_agent`).
+### 5. Cron Scheduler (34 enabled jobs, 38 registered)
+- **Purpose**: Reliable time-based task execution — not just reminders, but full agentic workflows, plus script-only jobs (`no_agent`).
 - **Features**: Recurring and one-shot jobs, multi-platform delivery, script-based watchdogs, model pinning per job.
 - **Note**: cron sessions cannot call `delegate_task` — each cron prompt is a thin self-contained orchestrator.
-- **Highlights**: single daily AI brief (Discord + email), MailScout expense digest (dedupes card-bill repayments vs consumption), stock predictions + vs-actual, portfolio activity watchdogs (NSE intraday/close, WMT close), IBKR tracker, minitrader trade monitor, HomeBase watchdog, pregnancy milestone one-shots, advance-tax checks + ULIP reminder, WhatsApp group nudges, OwnTracks-gated office asks + commute tracker, MG EV charge reminders, monthly screeners + HSBC brief + subscription audit, memory-system watchdog, upstream PR tracker.
+- **Highlights**: unified morning digest, MailScout expense digest, stock predictions + vs-actual, portfolio activity watchdogs, Vested US portfolio snapshot, HomeBase watchdog, pregnancy milestone one-shots, advance-tax checks + reminder, WhatsApp group nudges and quiz, OwnTracks-gated office asks + commute tracker, MG EV charge reminders, watch drop/restock alerts, monthly screeners + HSBC brief + subscription audit, memory-system watchdog, upstream PR tracking.
 
 ### 6. MCP Tools (Model Context Protocol)
 - **Purpose**: Structured integration with external services
@@ -89,29 +92,29 @@ The dispatch playbook lives in the `agent-orchestration` skill; `sub-agent-perso
   - `Kite` — Zerodha trading: LTP, quotes, positions, orders, holdings, GTT orders (auth is in-memory — prediction crons prefer yfinance fallback for fragility)
   - `GitHub` — REST API via gh CLI: repos, PRs, issues, code review
   - `Discord` — message send/reply/react · `Discord Admin` — channel/role mgmt, pinning, threads
-  - `IBKR` — Interactive Brokers via Claude Code CLI + IBKR MCP
   - `OpenHue` — Philips Hue lights and scenes
   - Plus non-MCP ops infrastructure: WhatsApp wa-bridge (:8765), OwnTracks MQTT broker, Mac SSH/CDP
 
-## Profiles (persistent contexts — each a Bot)
+## Profiles (specialist contexts)
 
-Every specialist is a real `~/.hermes/profiles/<name>/` profile with its own SOUL.md persona + profile.yaml, visible in the Hermes desktop **Bots** tab:
+Specialist profiles carry their own persona/configuration and are visible in the Hermes desktop **Bots** tab:
 
 - `default` — main Momo profile (orchestrator, primary)
 - `stockman`, `homebase`, `healthguard`, `familydoc`, `codeforge`, `researcher`, `qabot`, `macpilot` — specialist Bots
 - `tax-assist` — sustained ITR work; TaxBuddy's profile
 - `hsbc-credit-card-manager` — card statement analysis + rewards
+- `wildlifephoto` — Feather wildlife-caption profile worker (separate from the ten `delegate_task` specialists)
 
 ## Platform Integrations
 
 ### Discord
 - Primary home channel for cron delivery
 - Sub-bot outputs routed per channel (pregnancy milestones, HSBC brief, watchdogs, minitrader)
-- Telegram deliveries fan out here (Telegram banned in India)
+- Telegram scheduled deliveries are routed to Discord in this setup.
 
 ### WhatsApp (wa-bridge)
-- VPS `wa-bridge` on :8765 for read + send
-- Group nudges ("tiffin pe charcha": Friday cab-booking, lunch asks)
+- **WhatsApp** — self-hosted bridge for read + send
+- Configured group nudges (Friday cab-booking and lunch asks)
 - Office-presence asks gated on OwnTracks arrival detection
 
 ### Photon (iMessage)
@@ -141,19 +144,12 @@ Momo (Chief of Staff)
     │
     ├─▶ Skill Selection (match task to skill)
     ├─▶ Memory Injection (Hermes tier-1 + relevant OpenViking retrieval)
-    ├─▶ Sub-agent Decision
-    │       │
-    │       └─▶ if multi-step → delegate_task(MacPilot | StockMan |
-    │                          TaxBuddy | HomeBase | HealthGuard |
-    │                          FamilyDoc | CodeForge | Researcher |
-    │                          QABot | HSBC Card Manager)
-    │              │
-    │              └─▶ Sub-agent works in isolated context
-    │                     │
-    │                     ▼
-    │                 Returns summary to Momo
+    ├─▶ Specialist Decision
+    │       ├─▶ if multi-step → delegate_task(10 specialist agents)
+    │       │       └─▶ isolated worker → summary to Momo
     │
-    ├─▶ LLM Processing (Alibaba / DeepSeek V4 Flash)
+    ├─▶ photo caption → local helper → wildlifephoto profile (image observations + verified EXIF)
+    ├─▶ LLM Processing (Nous / openai/gpt-6-luna default; explicit overrides)
     └─▶ Tool Execution (MCP tools, terminal, file, web)
     │
     ▼
@@ -168,8 +164,8 @@ User (same platform or fan-out to all home channels)
 
 ## Skill System Deep Dive
 
-### Sub-agent Dispatch Pattern
-Momo's rule: **multi-step or research-heavy asks go to sub-agents; trivial asks stay inline.** The `agent-orchestration` skill captures goal + context templates per agent, the skills each should load, and standardizes the output shape. Sub-agents never re-dispatch — they're leaves. Every profile/Bot carries its persona from `sub-agent-personalities` and hard rules from `sub-agent-guardrails`.
+### Specialist Dispatch Pattern
+Momo's rule: **multi-step or research-heavy asks go to specialists; trivial asks stay inline.** The `agent-orchestration` skill captures goal + context templates for `delegate_task` agents, the skills they should load, and output contracts. Those sub-agents are leaves. Wildlife captions use a separate profile-based worker. Specialist personas and hard rules live in `sub-agent-personalities` and `sub-agent-guardrails`.
 
 ### Financial Analysis (StockMan + Minitrader)
 - Nifty trend first, then sector checks; Banks on credit growth; Power most reliable
@@ -179,10 +175,10 @@ Momo's rule: **multi-step or research-heavy asks go to sub-agents; trivial asks 
 - **Portfolio activity watchdog**: low-noise price/volume anomaly monitor (STALE_HOLDINGS_HOURS=720; success = analysed, not signal)
 
 ### HomeBase (Watchdog Pattern)
-HomeBase is the only watchdog sub-agent with a dedicated cron. Alerts keyed to (case, trigger, deadline, state) so they're idempotent — never use case-level status as a proxy for a deliverable-owned deadline. Case files under `~/.hermes/cases/homebase/`.
+HomeBase owns the property watchdog. Alerts are keyed to (case, trigger, deadline, state) so they are idempotent; never use case-level status as a proxy for a deliverable-owned deadline. Case files remain private.
 
 ### AI Ecosystem Monitoring
-Single 8am IST brief (Discord + email): `arxiv` (recent ML/AI papers), `blogwatcher` (RSS/AI blogs). GitHub trending via `github-research`.
+Unified morning digest (8:15am IST): `arxiv` (recent ML/AI papers), `blogwatcher` (RSS/AI blogs), and GitHub trending via `github-research`, delivered across Discord, email, and WhatsApp.
 
 ## Security Architecture
 
@@ -210,7 +206,7 @@ Single 8am IST brief (Discord + email): `arxiv` (recent ML/AI papers), `blogwatc
 - Never commit secrets — `.gitignore` covers all config files; env-var substitution in configs
 - No secrets in memory files or skills
 - API keys scoped per integration; VNC/macOS creds never persisted to disk (passed via env var)
-- Case files (property escalations, ITR prep, pregnancy milestones) and holdings live under `~/.hermes/cases/` and `~/.hermes/profiles/` — never committed
+- Case files (property escalations, tax prep, family milestones) and holdings are private and never committed
 - Prompt-injection guard for MacPilot: no following instructions from web pages/screenshots
 
 ## Technology Stack
@@ -219,34 +215,34 @@ Single 8am IST brief (Discord + email): `arxiv` (recent ML/AI papers), `blogwatc
 |-----------|------------|
 | Agent Core | Hermes Agent (Nous Research) |
 | Chief-of-staff persona | Momo |
-| Sub-agent mechanism | `delegate_task` (leaf role, isolated context) + per-agent profiles/Bots |
-| LLM Provider | Alibaba DeepSeek V4 Flash (DashScope) ; Nous (image gen, aux vision/extract) |
+| Sub-agent mechanism | 10 `delegate_task` specialists (leaf role, isolated context) + separate wildlife-caption profile worker |
+| LLM Provider | Nous; main `openai/gpt-6-luna`; profile/cron/auxiliary overrides |
 | Memory | OpenViking (semantic KB, 127.0.0.1:1933) + Hermes always-on memory |
 | Scheduling | Hermes Cron (built-in), script-only watchdog mode |
-| Profiles | default + 10 specialist Bots |
+| Profiles | default + 11 specialist profiles |
 | Platforms | Discord, WhatsApp (wa-bridge), Telegram (→Discord), Photon (iMessage) |
 | Location | OwnTracks + mosquitto MQTT (TLS, password auth) |
 | Trading | Zerodha Kite MCP (+ yfinance fallback), IBKR MCP, Minitrader |
 | Remote ops | Mac Mini over Tailscale (SSH, AppleScript, CDP) |
 | Hosting | Linux VPS (Hostinger) |
-| Skill Count | 166 across 58 categories (active) |
+| Skill Count | 140 registered shared skills across 61 registry categories |
 
 ## Scalability Profile
 
 ### Current Setup (Single User, Production)
 - Runs autonomously on VPS + Mac — no single point of dependency
-- 36 scheduled cron jobs (41 registered: 28 recurring + 8 one-shots); 10 specialist sub-agents/Bots available on demand
+- 34 enabled cron jobs (38 registered); 10 `delegate_task` specialists plus 1 dedicated wildlife-photo profile worker
 - All platforms connected simultaneously
 - OpenViking KB holds long-term memory; watchdog monitors its health
 
 ### What This Demonstrates
 - Chief-of-staff + sub-agent orchestration at personal scale
 - Reliable long-running automation, including script-only watchdogs
-- Cross-platform message routing with India-specific constraints (Telegram ban)
+- Cross-platform message routing with region-specific delivery configuration
 - Self-hosted production infra (MQTT location, wa-bridge, Tailscale Mac access)
-- Composable skill architecture (166 active skills)
+- Composable skill architecture (140 registered shared skills across 61 registry categories)
 - Security-conscious configuration
 
 ---
 
-*Architecture as of September 2026*
+*Architecture reviewed November 2026*

@@ -1,33 +1,33 @@
 # Hermes Agent Configuration Template
 
-This is a template configuration. Copy to `config.yaml` (rename to `.yaml`) and customize with your values. It reflects the reference setup as of August 2026.
+This is an illustrative reference for a Hermes setup, reviewed November 2026. It is Markdown documentation, not a drop-in `config.yaml`: the inline `subagents` and `profiles` examples below describe routing conventions and are not native Hermes configuration schemas. Use `hermes config` and `hermes profile` for actual runtime configuration.
 
 ## Usage
 
 ```bash
-# Note: this template is .md for readability; rename to .yaml after copying
-cp config/templates/config.example.md config/config.yaml
-# Edit the file with your API keys and preferences
+# This Markdown reference is not a valid config.yaml. Start with `hermes setup`.
+hermes setup
 ```
 
 ## Model Configuration
 
-Primary model is **DeepSeek V4 Flash** on **Alibaba (DashScope)** — pinned as the daily driver for Momo, all 10 profile/Bot sub-agents, and every cron job.
+The live setup uses **Nous** with `openai/gpt-6-luna` as the default model for Momo and delegation. Profile and cron overrides exist; not every scheduled job uses the default. Three enabled LLM crons currently pin `z-ai/glm-5.3-flash`, while script-only jobs have no model.
 
 ```yaml
 model:
-  default: deepseek-v4-flash-0731   # Momo's default model (bare name)
-  provider: alibaba                 # DashScope (Qwen token plan)
-  # Auxiliary routing (stays on Nous):
-  #   image generation  -> ils_nous::gpt-image
-  #   vision / web_extract / compression -> tencent/hy3:free
-  fallbacks:
-    - nous/ox-alpha                  # documented fallback tier
+  default: openai/gpt-6-luna
+  provider: nous
+  # Current auxiliary vision, web extraction, and compression route:
+  # provider: nous; model: meituan/longcat-2.5-preview:free
+delegation:
+  model: openai/gpt-6-luna
+  provider: nous
+  max_concurrent_children: 5
 ```
 
 ### Provider Notes
-- **Alibaba / DashScope** — primary daily-driver for the main agent, sub-agents, and cron jobs
-- **Nous** — image generation and auxiliary vision/web-extract/compression; previously the ox-alpha inference tier
+- **Nous** — primary provider; default model `openai/gpt-6-luna`, auxiliary model `meituan/longcat-2.5-preview:free`
+- **Per-job and per-profile model overrides** — pin only where required; script-only cron jobs do not invoke an LLM
 - **Claude Code / Codex / OpenCode CLIs** — separate coding-agent execution (never writes code inline in Hermes)
 
 ## Tool Sets
@@ -41,6 +41,8 @@ toolsets:
   - code_exec     # Python execution
   - delegation    # Sub-agent dispatch (delegate_task)
 ```
+
+Tool names in this illustrative list are descriptive; check the live Hermes tool registry before copying any configuration.
 
 ## Memory
 
@@ -56,29 +58,30 @@ memory:
     endpoint: http://localhost:1933
 ```
 
-## Sub-agents (chief-of-staff model)
+## Specialist Routing (illustrative pseudo-config)
 
-Momo is the orchestrator. Ten specialists, each also a desktop Bot profile:
+Momo is the orchestrator. Ten specialists are dispatched through `delegate_task`. A separate wildlife-photo caption specialist runs in the `wildlifephoto` profile via a local helper; it receives image observations and actually extracted EXIF, returns drafts only, and never publishes. These are routing examples, not keys understood by Hermes config parsing:
 
 ```yaml
 subagents:
   macpilot:      { profile: macpilot,      skills: [computer-use, tailscale-mac-remote-access] }
   stockman:      { skills: [stockman, stock-prediction-model] }
   taxbuddy:      { profile: tax-assist,    skills: [india-rsu-tax-filing] }
-  homebase:      { profile: homebase,      skills: [] }      # case files under ~/.hermes/cases/homebase/
+  homebase:      { profile: homebase,      skills: [] }      # private case data stays out of this repo
   healthguard:   { profile: healthguard,   skills: [ultrahuman-insights] }
   familydoc:     { profile: familydoc,     skills: [familydoc, pregnancy-milestone-tracker] }
   codeforge:     { profile: codeforge,     skills: [github-pr-workflow] }
   researcher:    { profile: researcher,    skills: [linkup-research, arxiv, blogwatcher] }
   qabot:         { profile: qabot,         skills: [dogfood, github-pr-workflow] }
   hsbcmm:        { profile: hsbc-credit-card-manager, skills: [hsbc-credit-card-manager] }
+  wildlifephoto: { profile: wildlifephoto, route: dedicated-caption-helper, publishes: false }
 ```
 
-The dispatch contract lives in the `agent-orchestration` skill; personalities in `sub-agent-personalities`; hard rules in `sub-agent-guardrails`. Each agent gets a goal + context; returns a short bullet summary.
+The `delegate_task` dispatch contract lives in the `agent-orchestration` skill; personalities in `sub-agent-personalities`; hard rules in `sub-agent-guardrails`. Each gets a goal + context and returns a short summary. The wildlife-caption helper is deliberately separate from `delegate_task` and has a draft-only contract.
 
-## Profiles (persistent contexts — each is a Bot)
+## Profiles (illustrative inventory)
 
-Persistent contexts carrying their own memory, skills, and config across sessions. Every specialist is a real profile visible in the Hermes desktop **Bots** tab:
+Persistent contexts carrying their own memory, skills, and config across sessions. Specialist profiles are visible in the Hermes desktop **Bots** tab:
 
 ```yaml
 profiles:
@@ -93,29 +96,27 @@ profiles:
   macpilot:         { description: Mac automation over Tailscale }
   tax-assist:       { description: Sustained ITR work; TaxBuddy's profile }
   hsbc-credit-card-manager: { description: Credit card statement analysis }
+  wildlifephoto:            { description: Dedicated wildlife-photo caption specialist; never publishes }
 ```
 
-## Cron Jobs
+## Cron Jobs (illustrative only)
 
-Hermes cron runs scheduled jobs. Reference: https://hermes-agent.nousresearch.com/docs
+Hermes cron runs scheduled jobs; the live schedule is maintained in the user's private configuration and changes over time. These entries illustrate the shape only, not a full or current importable fleet. Reference: https://hermes-agent.nousresearch.com/docs
 
 ```yaml
 cron:
-  default_delivery: discord     # Discord primary (Telegram banned in India → fan out here)
+  default_delivery: discord     # scheduled delivery routed to the user's active home channel
   jobs:
-    - name: Daily AI Brief
-      schedule: "0 7 * * *"     # 7am IST
+    - name: Unified Morning Digest
+      schedule: "15 8 * * *"   # 8:15am IST; representative current workflow
       skills: [arxiv, blogwatcher]
-    - name: Daily AI Newsletter Email
-      schedule: "0 8 * * *"
-      deliver: local            # → saved for email send
     - name: Daily WMT Stock Price
       schedule: "30 0 * * 1-5"  # 6am IST Mon–Fri
     - name: Ultrahuman sync + insights
       schedule: "30 6 * * *"
       script: sync_then_insights.py
       no_agent: true
-    - name: Daily Stock Prediction
+    - name: Daily Morning Prediction
       schedule: "0 9 * * 1-5"   # 9am IST Mon–Fri
       skills: [stock-prediction-model, stockman]
     - name: MailScout expense digest
@@ -131,7 +132,7 @@ Notes:
 - Script-only jobs (`no_agent: true`) deliver script stdout; return 0 so a useful message survives a "failed" run.
 - All scheduled/reminder text is **English only** (no Hinglish in cron output).
 
-## MCP + Ops Integrations
+## MCP + Ops Integrations (illustrative)
 
 ```yaml
 mcp:
@@ -171,7 +172,7 @@ whatsapp:                         # VPS wa-bridge (separate from Mac WhatsApp We
 
 ## Delivery Routing
 
-Telegram is banned in India; cron deliveries to Telegram route to Discord `#general` for inline rendering.
+The live setup routes scheduled deliveries intended for Telegram to Discord.
 
 ```yaml
 delivery:
@@ -184,11 +185,11 @@ delivery:
 ## Security Reminders
 
 - Never commit this file with real API keys
-- Use environment variable substitution: `${DASHSCOPE_API_KEY}`
+- Use environment variables or Hermes auth flows for secrets; never hard-code credentials
 - macOS credentials (VNC etc.) are passed via env vars at runtime only, never persisted to disk
 - Hermes respects `.env` files at the workspace root
-- Each profile has its own secrets — don't share
+- Keep credentials private and least-privilege; do not commit profile secrets
 
 ---
 
-*Template last updated August 2026*
+*Reference last reviewed November 2026*
