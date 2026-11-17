@@ -1,6 +1,6 @@
 # Hermes Agent Architecture
 
-High-level system architecture for the Hermes Agent personal assistant system. Last reviewed: November 2026.
+High-level system architecture for the Hermes Agent personal assistant system. Last reviewed: November 2026 (Hermes Agent v0.23.2).
 
 ## Overview
 
@@ -11,12 +11,12 @@ High-level system architecture for the Hermes Agent personal assistant system. L
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
 │  │  Skills  │  │  Memory  │  │  Cron    │  │   MCP    │    │
 │  │ System   │  │  Layer   │  │Scheduler │  │  Tools   │    │
-│  │ 140 / 61 │  │ 2-tier   │  │34 enabled│  │          │    │
+│  │ 129 / 53 │  │ 2-tier   │  │35 enabled│  │          │    │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘    │
 │       │             │             │             │           │
 │  ┌────┴─────────────┴─────────────┴─────────────┴────┐     │
 │  │          Tool Orchestration + Specialist          │     │
-│  │   Dispatch Layer (10 agents + profile worker)     │     │
+│  │ Dispatch + Kanban queue (10 agents + profile worker) │    │
 │  └─────────────────────┬───────────────────────────┘     │
 ├────────────────────────┼──────────────────────────────────┤
 │            ┌───────────┴───────────┐                      │
@@ -41,10 +41,10 @@ High-level system architecture for the Hermes Agent personal assistant system. L
 
 ## Core Components
 
-### 1. Hermes Agent Core — Momo (Chief of Staff)
+### 1. Hermes Agent Core - Momo (Chief of Staff)
 - **Purpose**: Main agent orchestrator and primary chat-facing persona. Routes requests, manages conversation state, coordinates tool execution, and dispatches to sub-agents.
 - **Responsibilities**: LLM interaction, tool call sequencing, error handling, multi-turn reasoning, sub-agent dispatch
-- **Provider**: Nous. Main agent and delegation default to `openai/gpt-6-luna`; profile and cron overrides are explicit. Auxiliary vision, compression, and web extraction use `meituan/longcat-2.5-preview:free` on Nous. The wildlife caption worker is a separate `wildlifephoto` profile with its own model route.
+- **Provider**: Nous. Main agent and delegation default to `openai/gpt-6-luna`; profile and cron overrides are explicit. Auxiliary tasks are individually configured; the previous shared LongCat route was reported as delisted, and curator's latest LLM review reports it unavailable.
 
 ### 2. Specialist Roster (10 `delegate_task` agents + 1 profile worker)
 
@@ -52,58 +52,67 @@ Momo delegates non-trivial work to ten specialist agents via `delegate_task`. Ea
 
 See [specialist routing](specialists.md) for the dispatch boundary, role list, and guardrails.
 
+Hermes Kanban work queues persist profile-assigned tasks, support dependencies and review, and run through the gateway dispatcher; they are separate from bounded `delegate_task` calls. The queue model and workflow are documented as system architecture, but the default board/task count has not been rechecked in this review.
+
 | # | Specialist | Domain / route |
 |---|-------|--------|
-| 1 | **MacPilot** | Drives the user's Mac (Safari, files, screenshots, shell) over Tailscale — SSH + AppleScript + CDP |
+| 1 | **MacPilot** | Drives the user's Mac (Safari, files, screenshots, shell) over Tailscale - SSH + AppleScript + CDP |
 | 2 | **StockMan** | Equity research, thesis reviews, sector deep-dives, daily portfolio prediction |
 | 3 | **TaxBuddy** | Form16/26AS reconciliation, capital gains, ITR-2 prep, advance tax (profile: `tax-assist`) |
 | 4 | **HomeBase** | Property escalations, home loan amortization, watchdog duties |
 | 5 | **HealthGuard** | Health insurance, claims, wearable trends, vaccinations |
-| 6 | **FamilyDoc** | Family physician triage — symptoms, Rx, vaccine info, labelled "AI diagnosis" |
+| 6 | **FamilyDoc** | Family physician triage - symptoms, Rx, vaccine info, labelled "AI diagnosis" |
 | 7 | **CodeForge** | Side-project scoping → Claude Code handoff brief (never writes code) |
 | 8 | **Researcher** | Multi-source deep dives with citations |
-| 9 | **QABot** | QA after builds — dogfood browser testing, evidence-led verdicts |
+| 9 | **QABot** | QA after builds - dogfood browser testing, evidence-led verdicts |
 | 10 | **HSBC Card Manager** | HSBC Premier credit card statement analysis & rewards |
 | 11 | **Feather / WildlifePhoto** | Image-grounded wildlife caption drafting; separate profile worker, draft-only |
 
 The `agent-orchestration` skill defines dispatch. `sub-agent-personalities` defines agent voice; `sub-agent-guardrails` holds hard rules. Wildlife captions use a separate helper and profile, not `delegate_task`. Default behavior: multi-step or research-heavy asks go to the matching specialist; simple Q&A, single tool calls, and cron-managed workflows stay inline.
 
-### 3. Skills System (140 registered shared skills, 61 registry categories)
-- **Purpose**: Modular capability packages — each skill is a self-contained workflow
+### 3. Skills System (129 enabled shared skills, 53 registry categories)
+- **Purpose**: Modular capability packages - each skill is a self-contained workflow
 - **Structure**: `SKILL.md` (definition/prereqs/commands/pitfalls) + optional `references/`, `templates/`, `scripts/`
 - **Loading**: On-demand per task (not all loaded at startup)
-- **Archive**: `.archive/` holds last-generation skills that were absorbed into umbrellas or pruned — excluded from the count. Profile-local skills are separate from the shared installed-skill inventory.
-- **Largest top-level categories**: productivity (20), software-development (12), research (11), financial-analysis (10), autonomous-ai-agents (8), smart-home (6)
+- **Inventory**: `SKILLS.md` counts skills shown by `hermes skills list --source all --enabled-only`; disabled and profile-local skills are excluded.
+- **Largest categories**: productivity (17), software-development (12), research (11), financial-analysis (9), autonomous-ai-agents (8), smart-home (6)
 
 ### 4. Memory Layer (Two-Tier)
-- **Tier 1 — Hermes memory** (always-on, ~2,200 chars): fixed-budget buffer injected into every system prompt. Holds durable preferences, rules, pointers.
-- **Tier 2 — OpenViking** (`viking://`): vector-indexed semantic knowledge base (at 127.0.0.1:1933) holding case files, entity profiles, event history, full statements. Retrieved only when searched. Monitored by a watchdog cron.
+- **Tier 1 - Hermes memory** (always-on, ~2,200 chars): fixed-budget buffer injected into every system prompt. Holds durable preferences, rules, pointers.
+- **Tier 2 - OpenViking** (`viking://`): vector-indexed semantic knowledge base (at 127.0.0.1:1933) holding case files, entity profiles, event history, full statements. Retrieved only when searched. Monitored by a watchdog cron.
 - **User Profile**: Preferences, location, work details, tool conventions (never shared externally)
 
-### 5. Cron Scheduler (34 enabled jobs, 38 registered)
-- **Purpose**: Reliable time-based task execution — not just reminders, but full agentic workflows, plus script-only jobs (`no_agent`).
+### 5. Cron Scheduler (35 enabled jobs, 39 registered)
+- **Purpose**: Reliable time-based task execution - not just reminders, but full agentic workflows, plus script-only jobs (`no_agent`).
 - **Features**: Recurring and one-shot jobs, multi-platform delivery, script-based watchdogs, model pinning per job.
-- **Note**: cron sessions cannot call `delegate_task` — each cron prompt is a thin self-contained orchestrator.
-- **Highlights**: unified morning digest, MailScout expense digest, stock predictions + vs-actual, portfolio activity watchdogs, Vested US portfolio snapshot, HomeBase watchdog, pregnancy milestone one-shots, advance-tax checks + reminder, WhatsApp group nudges and quiz, OwnTracks-gated office asks + commute tracker, MG EV charge reminders, watch drop/restock alerts, monthly screeners + HSBC brief + subscription audit, memory-system watchdog, upstream PR tracking.
+- **Note**: cron sessions cannot call `delegate_task` - each cron prompt is a thin self-contained orchestrator.
+- **Highlights**: unified morning digest, MailScout expense digest, stock predictions + vs-actual, portfolio activity watchdogs, Vested US portfolio snapshot, family-care milestone reminders, advance-tax checks + payment reminders, daily WhatsApp quiz, OwnTracks-gated commute tracker, MG EV charge reminders, watch drop/restock alerts, monthly screeners + HSBC brief + subscription audit, memory-system watchdog, upstream PR tracking, and long-term financial reminders. Office-arrival breakfast/lunch nudges and HN digest are paused.
 
-### 6. MCP Tools (Model Context Protocol)
+### 6. Curator (skill lifecycle)
+- **Status**: enabled, weekly schedule; current live status reports 27 active and 24 stale skills among 51 curator-managed skills, with no archived skills.
+- **Scope**: lifecycle management for eligible agent-created skills; pinned skills are protected. It does not manage the broader enabled shared skill inventory.
+- **Current operational note**: the last curator run's LLM review reported that `meituan/longcat-2.5-preview:free` is no longer available on Nous. The auxiliary config still references that model; automated LLM review may therefore be degraded until the route is replaced and verified.
+
+### 7. MCP Tools (Model Context Protocol)
 - **Purpose**: Structured integration with external services
 - **Active Integrations**:
-  - `Kite` — Zerodha trading: LTP, quotes, positions, orders, holdings, GTT orders (auth is in-memory — prediction crons prefer yfinance fallback for fragility)
-  - `GitHub` — REST API via gh CLI: repos, PRs, issues, code review
-  - `Discord` — message send/reply/react · `Discord Admin` — channel/role mgmt, pinning, threads
-  - `OpenHue` — Philips Hue lights and scenes
+  - `Kite` - Zerodha trading: LTP, quotes, positions, orders, holdings, GTT orders (auth is in-memory - prediction crons prefer yfinance fallback for fragility)
+  - `GitHub` - REST API via gh CLI: repos, PRs, issues, code review
+  - `Discord` - message send/reply/react · `Discord Admin` - channel/role mgmt, pinning, threads
+  - `OpenHue` - Philips Hue lights and scenes
   - Plus non-MCP ops infrastructure: WhatsApp wa-bridge (:8765), OwnTracks MQTT broker, Mac SSH/CDP
 
 ## Profiles (specialist contexts)
 
 Specialist profiles carry their own persona/configuration and are visible in the Hermes desktop **Bots** tab:
 
-- `default` — main Momo profile (orchestrator, primary)
-- `stockman`, `homebase`, `healthguard`, `familydoc`, `codeforge`, `researcher`, `qabot`, `macpilot` — specialist Bots
-- `tax-assist` — sustained ITR work; TaxBuddy's profile
-- `hsbc-credit-card-manager` — card statement analysis + rewards
-- `wildlifephoto` — Feather wildlife-caption profile worker (separate from the ten `delegate_task` specialists)
+- `default` - main Momo profile (orchestrator, primary)
+- `stockman`, `homebase`, `healthguard`, `familydoc`, `codeforge`, `researcher`, `qabot`, `macpilot` - specialist Bots
+- `tax-assist` - sustained ITR work; TaxBuddy's profile
+- `hsbc-credit-card-manager` - card statement analysis + rewards
+- `wildlifephoto` - Feather wildlife-caption profile worker (separate from the ten `delegate_task` specialists)
+
+There are 12 profiles total: the default profile plus 11 specialists. The dedicated wildlife-caption profile currently uses `openai/gpt-5.4-mini`; the other listed profiles use the fleet's `openai/gpt-6-luna` model.
 
 ## Platform Integrations
 
@@ -113,7 +122,7 @@ Specialist profiles carry their own persona/configuration and are visible in the
 - Telegram scheduled deliveries are routed to Discord in this setup.
 
 ### WhatsApp (wa-bridge)
-- **WhatsApp** — self-hosted bridge for read + send
+- **WhatsApp** - self-hosted bridge for read + send
 - Configured group nudges (Friday cab-booking and lunch asks)
 - Office-presence asks gated on OwnTracks arrival detection
 
@@ -145,8 +154,9 @@ Momo (Chief of Staff)
     ├─▶ Skill Selection (match task to skill)
     ├─▶ Memory Injection (Hermes tier-1 + relevant OpenViking retrieval)
     ├─▶ Specialist Decision
-    │       ├─▶ if multi-step → delegate_task(10 specialist agents)
-    │       │       └─▶ isolated worker → summary to Momo
+    ├─▶ if bounded multi-step → delegate_task(10 specialist agents)
+    │       └─▶ isolated worker → summary to Momo
+    ├─▶ if durable/profile-assigned → Kanban queue → dispatcher → worker profile
     │
     ├─▶ photo caption → local helper → wildlifephoto profile (image observations + verified EXIF)
     ├─▶ LLM Processing (Nous / openai/gpt-6-luna default; explicit overrides)
@@ -163,6 +173,9 @@ User (same platform or fan-out to all home channels)
 ```
 
 ## Skill System Deep Dive
+
+### Durable Kanban vs. `delegate_task`
+Use `delegate_task` for bounded synchronous subtasks whose summary returns to Momo in the current turn. Use the Kanban board for durable tasks that should survive a gateway restart, have a named profile assignee, track dependencies or review, or need explicit task history. The dispatcher runs within the gateway; workers receive a board-scoped task context and isolated workspace. The default board task count was not verified in this review.
 
 ### Specialist Dispatch Pattern
 Momo's rule: **multi-step or research-heavy asks go to specialists; trivial asks stay inline.** The `agent-orchestration` skill captures goal + context templates for `delegate_task` agents, the skills they should load, and output contracts. Those sub-agents are leaves. Wildlife captions use a separate profile-based worker. Specialist personas and hard rules live in `sub-agent-personalities` and `sub-agent-guardrails`.
@@ -203,7 +216,7 @@ Unified morning digest (8:15am IST): `arxiv` (recent ML/AI papers), `blogwatcher
 ```
 
 ### Best Practices Enforced
-- Never commit secrets — `.gitignore` covers all config files; env-var substitution in configs
+- Never commit secrets - `.gitignore` covers all config files; env-var substitution in configs
 - No secrets in memory files or skills
 - API keys scoped per integration; VNC/macOS creds never persisted to disk (passed via env var)
 - Case files (property escalations, tax prep, family milestones) and holdings are private and never committed
@@ -215,8 +228,8 @@ Unified morning digest (8:15am IST): `arxiv` (recent ML/AI papers), `blogwatcher
 |-----------|------------|
 | Agent Core | Hermes Agent (Nous Research) |
 | Chief-of-staff persona | Momo |
-| Sub-agent mechanism | 10 `delegate_task` specialists (leaf role, isolated context) + separate wildlife-caption profile worker |
-| LLM Provider | Nous; main `openai/gpt-6-luna`; profile/cron/auxiliary overrides |
+| Sub-agent mechanism | 10 `delegate_task` specialists (leaf role, isolated context) + separate wildlife-caption profile worker; Kanban for durable profile-assigned tasks |
+| LLM Provider | Nous; main `openai/gpt-6-luna`; wildlifephoto uses `openai/gpt-5.4-mini`; explicit cron/profile/auxiliary overrides |
 | Memory | OpenViking (semantic KB, 127.0.0.1:1933) + Hermes always-on memory |
 | Scheduling | Hermes Cron (built-in), script-only watchdog mode |
 | Profiles | default + 11 specialist profiles |
@@ -225,13 +238,13 @@ Unified morning digest (8:15am IST): `arxiv` (recent ML/AI papers), `blogwatcher
 | Trading | Zerodha Kite MCP (+ yfinance fallback), IBKR MCP, Minitrader |
 | Remote ops | Mac Mini over Tailscale (SSH, AppleScript, CDP) |
 | Hosting | Linux VPS (Hostinger) |
-| Skill Count | 140 registered shared skills across 61 registry categories |
+| Skill Count | 129 enabled shared skills across 53 registry categories |
 
 ## Scalability Profile
 
 ### Current Setup (Single User, Production)
-- Runs autonomously on VPS + Mac — no single point of dependency
-- 34 enabled cron jobs (38 registered); 10 `delegate_task` specialists plus 1 dedicated wildlife-photo profile worker
+- Runs autonomously on VPS + Mac - no single point of dependency
+- 35 enabled cron jobs (39 registered); 10 `delegate_task` specialists plus 1 dedicated wildlife-photo profile worker; Kanban dispatcher enabled
 - All platforms connected simultaneously
 - OpenViking KB holds long-term memory; watchdog monitors its health
 
@@ -240,9 +253,9 @@ Unified morning digest (8:15am IST): `arxiv` (recent ML/AI papers), `blogwatcher
 - Reliable long-running automation, including script-only watchdogs
 - Cross-platform message routing with region-specific delivery configuration
 - Self-hosted production infra (MQTT location, wa-bridge, Tailscale Mac access)
-- Composable skill architecture (140 registered shared skills across 61 registry categories)
+- Composable skill architecture (129 enabled shared skills across 53 registry categories)
 - Security-conscious configuration
 
 ---
 
-*Architecture reviewed November 2026*
+*Architecture reviewed November 2026 (Hermes Agent v0.23.2)*
